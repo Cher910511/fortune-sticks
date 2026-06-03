@@ -1971,17 +1971,25 @@ function checkBlocked(){
 function saveDrawTime(){
   localStorage.setItem(STORAGE_KEY,String(Date.now()));
   if(currentLot){
-    try{ localStorage.setItem(LOT_STORAGE_KEY,JSON.stringify(currentLot)); }catch(e){}
+    try{
+      const s=JSON.stringify(currentLot);
+      localStorage.setItem(LOT_STORAGE_KEY,s);
+      localStorage.setItem('fortune_last_lot_v2',s);
+    }catch(e){}
   }
 }
 let blockTimer=null;
 function showBlockedScreen(remainMs){
   // 恢复上次签文，以便注解/分享可用
+  getOrRestoreLot();
+  // 如果签文数据丢了，清除限制，允许重新求签
   if(!currentLot){
-    try{
-      const saved=localStorage.getItem(LOT_STORAGE_KEY);
-      if(saved) currentLot=JSON.parse(saved);
-    }catch(e){}
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(LOT_STORAGE_KEY);
+    localStorage.removeItem('fortune_last_lot_v2');
+    showToast('签文数据已过期，可重新求签');
+    showScreen('s0');
+    return;
   }
   const cd=document.getElementById('countdownVal');
   function tick(){
@@ -2207,9 +2215,16 @@ function goShakeAgain(){
 // ══════════════════════
 function getOrRestoreLot(){
   if(currentLot) return currentLot;
+  // 尝试用变量 key 和硬编码 key 两种方式恢复
+  const keys=[LOT_STORAGE_KEY,'fortune_last_lot_v2','fortune_last_lot'];
   try{
-    const saved=localStorage.getItem(LOT_STORAGE_KEY);
-    if(saved){ currentLot=JSON.parse(saved); return currentLot; }
+    for(const k of keys){
+      const saved=localStorage.getItem(k);
+      if(saved){
+        const parsed=JSON.parse(saved);
+        if(parsed&&parsed.num){ currentLot=parsed; return currentLot; }
+      }
+    }
   }catch(e){}
   return null;
 }
