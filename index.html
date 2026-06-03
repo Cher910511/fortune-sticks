@@ -1,0 +1,2486 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>数玄签 · 问天机</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700&display=swap');
+
+:root {
+  --bg: #05070e;
+  --bg2: #0a0e18;
+  --bg3: #0f1420;
+  --gold: #c9a84c;
+  --gold-l: #f0d080;
+  --gold-d: #8a6020;
+  --gold-glow: rgba(201,168,76,0.4);
+  --red: #c0392b;
+  --red-l: #e74c3c;
+  --cyan: #4dd9d9;
+  --cyan-d: #1a8080;
+  --ink: #e8dcc8;
+  --ink-d: #9a8a70;
+  --ink-m: #b8a888;
+  --paper: #1a1410;
+  --paper-d: #2a2018;
+  --paper-edge: #c9a84c;
+  --smoke: rgba(201,168,76,0.06);
+  --rune-glow: rgba(201,168,76,0.15);
+  --star: rgba(200,210,230,0.6);
+  --mist: rgba(10,14,24,0.85);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Noto Serif SC', 'STKaiti', serif;
+  min-height: 100vh;
+  overflow: hidden;
+  position: relative;
+  cursor: default;
+  user-select: none;
+}
+
+/* ══════════════════════
+   背景：水墨山水 SVG（内联）
+══════════════════════ */
+#ink-bg {
+  position: fixed; inset: 0; z-index: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  opacity: 0.35;
+}
+
+.vignette {
+  position: fixed; inset: 0; z-index: 2; pointer-events: none;
+  background: radial-gradient(ellipse at center,
+    transparent 40%,
+    rgba(4,6,12,0.55) 68%,
+    rgba(4,6,12,0.85) 100%
+  );
+}
+
+/* ══════════════════════
+   水墨动画层
+══════════════════════ */
+.ink-wash-layer {
+  position: fixed; inset: 0; z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* ── 大面积云雾 — 白色水墨氤氲 ── */
+.ink-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+}
+.ink-blob:nth-child(1) {
+  width: 900px; height: 900px;
+  top: -30%; left: -25%;
+  background: radial-gradient(circle at 40% 50%,
+    rgba(255,255,255,0.12) 0%,
+    rgba(220,220,230,0.06) 30%,
+    rgba(180,180,200,0.02) 55%,
+    transparent 72%
+  );
+  animation: inkDrift1 24s ease-in-out infinite;
+  filter: blur(100px);
+}
+.ink-blob:nth-child(2) {
+  width: 650px; height: 650px;
+  top: 28%; right: -28%;
+  background: radial-gradient(circle at 55% 45%,
+    rgba(240,235,250,0.1) 0%,
+    rgba(200,200,220,0.05) 35%,
+    rgba(160,160,180,0.02) 58%,
+    transparent 72%
+  );
+  animation: inkDrift2 28s ease-in-out infinite;
+}
+.ink-blob:nth-child(3) {
+  width: 550px; height: 550px;
+  bottom: -25%; left: 18%;
+  background: radial-gradient(circle at 45% 40%,
+    rgba(250,245,255,0.1) 0%,
+    rgba(210,210,230,0.05) 38%,
+    rgba(170,170,190,0.02) 60%,
+    transparent 72%
+  );
+  animation: inkDrift3 22s ease-in-out infinite;
+}
+.ink-blob:nth-child(4) {
+  width: 450px; height: 450px;
+  top: 10%; left: 48%;
+  background: radial-gradient(circle at 50% 50%,
+    rgba(255,250,255,0.08) 0%,
+    rgba(200,200,220,0.04) 42%,
+    rgba(150,150,180,0.01) 62%,
+    transparent 73%
+  );
+  animation: inkDrift4 20s ease-in-out infinite;
+  filter: blur(80px);
+}
+.ink-blob:nth-child(5) {
+  width: 380px; height: 380px;
+  top: 55%; left: 60%;
+  background: radial-gradient(circle at 50% 45%,
+    rgba(235,230,245,0.07) 0%,
+    rgba(180,180,210,0.03) 45%,
+    transparent 68%
+  );
+  animation: inkDrift5 26s ease-in-out infinite;
+  filter: blur(60px);
+}
+
+/* ── 烟雾粒子 — 轻烟袅袅 ── */
+.ink-speck {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(4px);
+}
+.ink-speck:nth-child(6)  { width:120px; height:120px; top:5%;  left:15%; background: radial-gradient(circle, rgba(255,255,255,0.14) 0%, transparent 70%); animation: speckFloat1 10s ease-in-out infinite; }
+.ink-speck:nth-child(7)  { width:80px;  height:80px;  top:45%; left:80%; background: radial-gradient(circle, rgba(240,240,255,0.12) 0%, transparent 70%);  animation: speckFloat2 12s ease-in-out infinite; }
+.ink-speck:nth-child(8)  { width:100px; height:100px; top:80%; left:6%;  background: radial-gradient(circle, rgba(250,250,255,0.13) 0%, transparent 70%);  animation: speckFloat3 11s ease-in-out infinite; }
+.ink-speck:nth-child(9)  { width:65px;  height:65px;  top:25%; left:70%; background: radial-gradient(circle, rgba(230,230,250,0.11) 0%, transparent 70%);  animation: speckFloat4 14s ease-in-out infinite; }
+.ink-speck:nth-child(10) { width:110px; height:110px; top:90%; left:85%; background: radial-gradient(circle, rgba(245,245,255,0.1) 0%, transparent 70%);  animation: speckFloat1 13s ease-in-out infinite; }
+.ink-speck:nth-child(11) { width:70px;  height:70px;  top:15%; left:44%; background: radial-gradient(circle, rgba(255,250,255,0.12) 0%, transparent 70%);  animation: speckFloat3 15s ease-in-out infinite; }
+.ink-speck:nth-child(12) { width:90px;  height:90px;  top:70%; left:32%; background: radial-gradient(circle, rgba(235,235,250,0.1) 0%, transparent 70%);   animation: speckFloat2 9s ease-in-out infinite; }
+
+/* ── 烟缕 — 长条飘烟 ── */
+.ink-wisp {
+  position: absolute;
+  border-radius: 40%;
+  filter: blur(25px);
+}
+.ink-wisp:nth-child(13) { width:400px; height:100px; top:35%; left:-10%;  background: radial-gradient(ellipse at center, rgba(255,255,255,0.08) 0%, transparent 70%); animation: wispDrift1 18s ease-in-out infinite; }
+.ink-wisp:nth-child(14) { width:320px; height:80px;  top:75%; right:-15%; background: radial-gradient(ellipse at center, rgba(240,240,255,0.07) 0%, transparent 70%); animation: wispDrift2 22s ease-in-out infinite; }
+.ink-wisp:nth-child(15) { width:280px; height:65px;  top:10%; left:55%;  background: radial-gradient(ellipse at center, rgba(250,250,255,0.06) 0%, transparent 70%); animation: wispDrift3 20s ease-in-out infinite; }
+
+/* ── 新增烟雾层: 底部升腾 ── */
+.smoke-rise {
+  position: absolute;
+  border-radius: 50% 50% 0 0;
+  filter: blur(35px);
+}
+.smoke-rise:nth-child(16) { width:350px; height:200px; bottom:-5%;  left:5%;   background: radial-gradient(ellipse at bottom, rgba(255,255,255,0.09) 0%, transparent 70%); animation: smokeRiseAnim1 12s ease-in-out infinite; }
+.smoke-rise:nth-child(17) { width:280px; height:160px; bottom:-8%;  left:38%;  background: radial-gradient(ellipse at bottom, rgba(240,240,255,0.07) 0%, transparent 70%); animation: smokeRiseAnim2 15s ease-in-out infinite; }
+.smoke-rise:nth-child(18) { width:320px; height:180px; bottom:-6%;  right:8%;  background: radial-gradient(ellipse at bottom, rgba(250,250,255,0.08) 0%, transparent 70%); animation: smokeRiseAnim3 14s ease-in-out infinite; }
+.smoke-rise:nth-child(19) { width:250px; height:140px; bottom:-10%; right:35%; background: radial-gradient(ellipse at bottom, rgba(235,235,250,0.06) 0%, transparent 70%); animation: smokeRiseAnim1 17s ease-in-out infinite; }
+
+/* ── 新增: 飘浮烟带（横向） ── */
+.smoke-band {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(30px);
+}
+.smoke-band:nth-child(20) { width:500px; height:50px; top:20%; left:-20%;  background: radial-gradient(ellipse at center, rgba(255,255,255,0.05) 0%, transparent 80%); animation: bandDrift1 16s ease-in-out infinite; }
+.smoke-band:nth-child(21) { width:400px; height:40px; top:55%; right:-18%; background: radial-gradient(ellipse at center, rgba(240,240,250,0.04) 0%, transparent 80%); animation: bandDrift2 20s ease-in-out infinite; }
+.smoke-band:nth-child(22) { width:350px; height:45px; top:80%; left:30%;   background: radial-gradient(ellipse at center, rgba(250,250,255,0.04) 0%, transparent 80%); animation: bandDrift3 18s ease-in-out infinite; }
+
+/* ── 动画关键帧 ── */
+@keyframes inkDrift1 {
+  0%,100% { transform: translate(0,0) scale(1);      opacity:.7; }
+  20%     { transform: translate(60px,-35px) scale(1.12); opacity:.55; }
+  45%     { transform: translate(-35px,25px) scale(.82); opacity:.85; }
+  70%     { transform: translate(-45px,-20px) scale(1.2); opacity:.48; }
+}
+@keyframes inkDrift2 {
+  0%,100% { transform: translate(0,0) scale(1);      opacity:.65; }
+  30%     { transform: translate(-65px,30px) scale(1.22); opacity:.42; }
+  60%     { transform: translate(35px,-40px) scale(.75);  opacity:.78; }
+  85%     { transform: translate(-30px,15px) scale(1.08); opacity:.52; }
+}
+@keyframes inkDrift3 {
+  0%,100% { transform: translate(0,0) scale(1);      opacity:.58; }
+  35%     { transform: translate(45px,-50px) scale(1.28); opacity:.74; }
+  75%     { transform: translate(-30px,35px) scale(.85);  opacity:.4; }
+}
+@keyframes inkDrift4 {
+  0%,100% { transform: translate(0,0) scale(1);      opacity:.45; }
+  25%     { transform: translate(-40px,-30px) scale(1.38); opacity:.28; }
+  55%     { transform: translate(25px,40px) scale(.72);    opacity:.6; }
+  80%     { transform: translate(35px,-15px) scale(1.18);  opacity:.32; }
+}
+@keyframes inkDrift5 {
+  0%,100% { transform: translate(0,0) scale(1);      opacity:.4; }
+  40%     { transform: translate(-50px,20px) scale(1.42); opacity:.58; }
+  70%     { transform: translate(40px,-30px) scale(.78);  opacity:.25; }
+}
+@keyframes speckFloat1 {
+  0%,100% { transform: translate(0,0) scale(1); opacity:.35; }
+  33%     { transform: translate(35px,-50px) scale(2); opacity:.7; }
+  66%     { transform: translate(-25px,-20px) scale(1.1); opacity:.2; }
+}
+@keyframes speckFloat2 {
+  0%,100% { transform: translate(0,0) scale(1); opacity:.25; }
+  50%     { transform: translate(-40px,-60px) scale(2.3); opacity:.6; }
+}
+@keyframes speckFloat3 {
+  0%,100% { transform: translate(0,0) scale(1.5); opacity:.18; }
+  50%     { transform: translate(30px,-65px) scale(0.8); opacity:.58; }
+}
+@keyframes speckFloat4 {
+  0%,100% { transform: translate(0,0) scale(1); opacity:.4; }
+  40%     { transform: translate(-35px,-40px) scale(2.5); opacity:.72; }
+  80%     { transform: translate(15px,10px) scale(1.1); opacity:.22; }
+}
+@keyframes wispDrift1 {
+  0%,100% { transform: translate(0,0) rotate(0deg); opacity:.22; }
+  50%     { transform: translate(40px,-20px) rotate(12deg); opacity:.42; }
+}
+@keyframes wispDrift2 {
+  0%,100% { transform: translate(0,0) rotate(0deg); opacity:.25; }
+  33%     { transform: translate(-35px,15px) rotate(-8deg); opacity:.14; }
+  66%     { transform: translate(-55px,-30px) rotate(5deg); opacity:.38; }
+}
+@keyframes wispDrift3 {
+  0%,100% { transform: translate(0,0) rotate(0deg); opacity:.18; }
+  50%     { transform: translate(-30px,22px) rotate(-12deg); opacity:.34; }
+}
+/* ── 底部升腾 ── */
+@keyframes smokeRiseAnim1 {
+  0%,100% { transform: translateY(0) scaleY(1); opacity:.5; }
+  50%     { transform: translateY(-60px) scaleY(1.5); opacity:.8; }
+}
+@keyframes smokeRiseAnim2 {
+  0%,100% { transform: translateY(0) scaleY(1); opacity:.4; }
+  33%     { transform: translateY(-40px) scaleY(1.4); opacity:.7; }
+  66%     { transform: translateY(-20px) scaleY(1.2); opacity:.55; }
+}
+@keyframes smokeRiseAnim3 {
+  0%,100% { transform: translateY(0) scaleY(1); opacity:.45; }
+  50%     { transform: translateY(-55px) scaleY(1.6); opacity:.75; }
+}
+/* ── 横向飘烟 ── */
+@keyframes bandDrift1 {
+  0%,100% { transform: translateX(0); opacity:.3; }
+  50%     { transform: translateX(80px); opacity:.5; }
+}
+@keyframes bandDrift2 {
+  0%,100% { transform: translateX(0); opacity:.25; }
+  50%     { transform: translateX(-60px); opacity:.45; }
+}
+@keyframes bandDrift3 {
+  0%,100% { transform: translateX(0); opacity:.2; }
+  50%     { transform: translateX(-50px); opacity:.4; }
+}
+
+/* ── 动态远山 ── */
+#ink-bg {
+  animation: mountainBreathe 10s ease-in-out infinite alternate;
+}
+@keyframes mountainBreathe {
+  0%   { opacity: .5; transform: scale(1); }
+  100% { opacity: .65; transform: scale(1.02); }
+}
+
+/* ── 白墨滴落 ── */
+.ink-drip {
+  position: fixed;
+  pointer-events: none;
+  z-index: 1;
+}
+.ink-drip-body {
+  position: absolute;
+  width: 3px;
+  background: linear-gradient(180deg,
+    rgba(255,255,255,0.5),
+    rgba(220,220,240,0.3),
+    rgba(180,180,200,0.05)
+  );
+  border-radius: 0 0 2px 2px;
+  animation: dripFall 6s ease-in forwards;
+}
+.ink-drip-splash {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: radial-gradient(circle, rgba(255,255,255,0.12), transparent);
+  animation: dripSplash 6s ease-out forwards;
+}
+@keyframes dripFall {
+  0%   { height:0; opacity:0; transform:translateY(0); }
+  15%  { opacity:1; }
+  70%  { height:180px; opacity:.7; transform:translateY(180px); }
+  85%  { height:160px; opacity:.3; transform:translateY(250px); }
+  100% { height:0; opacity:0; transform:translateY(260px); }
+}
+@keyframes dripSplash {
+  0%   { width:0; height:0; opacity:0; transform:translate(-50%,-50%) scale(0); }
+  70%  { opacity:0; }
+  80%  { width:40px; height:40px; opacity:.35; transform:translate(-50%,-50%) scale(1); }
+  100% { width:80px; height:80px; opacity:0; transform:translate(-50%,-50%) scale(2.5); }
+}
+
+/* ── 多层雾气叠加 ── */
+.mist-overlay {
+  position: fixed; inset: 0; z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 80% 18% at 10% 90%, rgba(255,255,255,0.08) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 12% at 80% 10%, rgba(240,240,255,0.06) 0%, transparent 55%),
+    radial-gradient(ellipse 70% 20% at 50% 55%, rgba(250,250,255,0.04) 0%, transparent 50%),
+    radial-gradient(ellipse 45% 8%  at 30% 35%, rgba(255,255,255,0.05) 0%, transparent 50%),
+    radial-gradient(ellipse 55% 10% at 70% 80%, rgba(230,230,250,0.06) 0%, transparent 50%);
+  animation: mistDrift 16s ease-in-out infinite alternate;
+}
+@keyframes mistDrift {
+  0%   { opacity: .7; transform: translate(0, 0) scale(1); }
+  25%  { opacity: .9; transform: translate(20px, -15px) scale(1.04); }
+  50%  { opacity: 1; transform: translate(-10px, 8px) scale(0.97); }
+  75%  { opacity: .8; transform: translate(-15px, -5px) scale(1.03); }
+  100% { opacity: .95; transform: translate(12px, -10px) scale(1.02); }
+}
+
+/* ══════════════════════
+   主容器
+══════════════════════ */
+#app {
+  position: relative; z-index: 10;
+  width: 100vw; height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+}
+
+/* 屏幕切换 */
+.screen { display: none; flex-direction: column; align-items: center; width: 100%; }
+.screen.active { display: flex; animation: scIn .6s ease; }
+@keyframes scIn {
+  from { opacity:0; transform:translateY(16px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* ══════════════════════
+   顶部标题区
+══════════════════════ */
+.header {
+  position: fixed; top: 0; left: 0; right: 0;
+  padding: 16px 24px 16px;
+  background: linear-gradient(180deg, var(--bg) 30%, rgba(5,7,14,0.92) 65%, transparent);
+  display: flex; justify-content: center; align-items: flex-end;
+  gap: 12px; z-index: 20;
+}
+
+.title-main {
+  font-size: clamp(18px, 4vw, 26px);
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 6px;
+  text-shadow: 0 0 20px rgba(201,168,76,0.6);
+}
+
+.title-sub {
+  font-size: 11px;
+  color: var(--ink-d);
+  letter-spacing: 4px;
+  padding-bottom: 3px;
+  border-bottom: 1px solid var(--gold-d);
+}
+
+/* 顶部装饰线 */
+.header-deco {
+  position: fixed; top: 54px; left: 50%; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 8px; z-index: 20;
+}
+.deco-line { width: 60px; height: 1px; background: linear-gradient(90deg, transparent, var(--gold-d)); }
+.deco-line.r { transform: scaleX(-1); }
+.deco-diamond {
+  width: 6px; height: 6px;
+  background: var(--gold-d);
+  transform: rotate(45deg);
+}
+
+/* ══════════════════════
+   S0: 进场
+══════════════════════ */
+#s0 { gap: 0; padding-top: 80px; }
+
+.temple-icon {
+  width: 72px; height: 72px;
+  position: relative;
+  margin-bottom: 8px;
+  animation: float 4s ease-in-out infinite;
+  display: flex; align-items: center; justify-content: center;
+}
+.temple-icon svg {
+  width: 64px; height: 64px;
+  opacity: .55;
+  filter: drop-shadow(0 0 20px rgba(201,168,76,0.15));
+}
+.temple-icon::after {
+  content: '';
+  position: absolute;
+  width: 80px; height: 80px;
+  border: 1px solid rgba(201,168,76,0.08);
+  border-radius: 50%;
+}
+@keyframes float {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.welcome-text {
+  font-size: 13px;
+  color: var(--ink-d);
+  letter-spacing: 3px;
+  margin-bottom: 28px;
+  text-align: center;
+  line-height: 2;
+}
+
+.wish-label {
+  font-size: 12px;
+  color: var(--gold-d);
+  letter-spacing: 3px;
+  margin-bottom: 10px;
+}
+
+.wish-input-wrap {
+  position: relative;
+  width: min(340px, 88vw);
+  margin-bottom: 28px;
+}
+.wish-input-wrap::before,
+.wish-input-wrap::after {
+  content: '';
+  position: absolute;
+  width: 10px; height: 10px;
+  border-color: var(--gold-d);
+  border-style: solid;
+}
+.wish-input-wrap::before { top:-2px; left:-2px; border-width:2px 0 0 2px; }
+.wish-input-wrap::after  { bottom:-2px; right:-2px; border-width:0 2px 2px 0; }
+
+.wish-input {
+  width: 100%;
+  background: rgba(201,168,76,0.04);
+  border: 1px solid rgba(201,168,76,0.25);
+  padding: 12px 16px;
+  font-family: inherit;
+  font-size: 15px;
+  color: var(--ink);
+  outline: none;
+  letter-spacing: 1px;
+  text-align: center;
+  transition: border-color .3s, background .3s;
+}
+.wish-input:focus {
+  border-color: rgba(201,168,76,0.6);
+  background: rgba(201,168,76,0.08);
+}
+.wish-input::placeholder { color: var(--ink-d); font-size: 13px; letter-spacing: 2px; }
+
+.btn-seek {
+  position: relative;
+  padding: 13px 44px;
+  background: transparent;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  font-family: inherit;
+  font-size: 15px;
+  letter-spacing: 4px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: color .3s;
+}
+.btn-seek::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: var(--gold);
+  transform: translateX(-101%);
+  transition: transform .35s cubic-bezier(.4,0,.2,1);
+}
+.btn-seek:hover::before { transform: translateX(0); }
+.btn-seek:hover { color: var(--bg); }
+.btn-seek span { position: relative; z-index: 1; }
+
+/* ══════════════════════
+   S1: 摇签
+══════════════════════ */
+#s1 { gap: 0; padding-top: 80px; }
+
+.shake-hint {
+  font-size: 13px;
+  color: var(--ink-d);
+  letter-spacing: 3px;
+  text-align: center;
+  line-height: 2;
+  margin-bottom: 32px;
+}
+.shake-hint b { color: var(--gold); font-weight: 400; }
+
+/* 签筒 */
+.tube-wrap {
+  position: relative;
+  width: 110px;
+  margin-bottom: 28px;
+  cursor: pointer;
+}
+.tube {
+  width: 100%;
+  position: relative;
+  transform-origin: bottom center;
+  transition: transform .1s;
+}
+
+.tube-top {
+  width: 90px; height: 20px;
+  background: linear-gradient(180deg, #4a3010, #2a1a08);
+  border: 1px solid var(--gold-d);
+  border-radius: 4px 4px 0 0;
+  margin: 0 auto;
+  position: relative;
+  z-index: 3;
+}
+.tube-body {
+  width: 100%; height: 160px;
+  background: linear-gradient(180deg,
+    #3a2008 0%, #5a3010 15%, #4a2808 85%, #2a1808 100%
+  );
+  border: 1px solid var(--gold-d);
+  border-top: none;
+  position: relative;
+  overflow: hidden;
+  z-index: 2;
+}
+/* 竹纹 */
+.tube-body::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    180deg,
+    transparent 0, transparent 18px,
+    rgba(0,0,0,0.2) 18px, rgba(0,0,0,0.2) 20px
+  );
+}
+/* 光泽 */
+.tube-body::after {
+  content: '';
+  position: absolute; top:0; left: 8px; bottom:0; width: 12px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
+}
+/* 铜环 */
+.tube-ring {
+  position: absolute; left:-2px; right:-2px; height: 8px;
+  background: linear-gradient(180deg, var(--gold-l), var(--gold-d), var(--gold-l));
+  z-index: 4;
+}
+.tube-ring.r1 { top: 20px; }
+.tube-ring.r2 { bottom: 24px; }
+
+/* 签条从筒里冒出 */
+.sticks-container {
+  position: absolute;
+  bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 70%; height: 85%;
+  display: flex; justify-content: center; gap: 3px;
+  z-index: 1;
+}
+.stick-item {
+  width: 7px;
+  height: 100%;
+  border-radius: 2px 2px 0 0;
+  position: relative;
+  transform-origin: bottom center;
+  transition: transform .08s ease;
+}
+
+.tube-bottom {
+  width: 100%; height: 14px;
+  background: linear-gradient(180deg, #2a1808, #1a1005);
+  border: 1px solid var(--gold-d);
+  border-top: none;
+  border-radius: 0 0 6px 6px;
+}
+
+/* 文字刻字 */
+.tube-text {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  writing-mode: vertical-rl;
+  font-size: 13px;
+  color: var(--gold-d);
+  letter-spacing: 4px;
+  z-index: 5;
+  pointer-events: none;
+  text-shadow: 0 0 8px rgba(201,168,76,0.3);
+}
+
+/* 摇动动画 */
+@keyframes shake {
+  0%,100% { transform: rotate(0deg); }
+  10% { transform: rotate(-8deg); }
+  20% { transform: rotate(10deg); }
+  30% { transform: rotate(-12deg); }
+  40% { transform: rotate(14deg); }
+  50% { transform: rotate(-10deg); }
+  60% { transform: rotate(12deg); }
+  70% { transform: rotate(-6deg); }
+  80% { transform: rotate(8deg); }
+  90% { transform: rotate(-4deg); }
+}
+.tube.shaking { animation: shake .6s ease; }
+
+/* 进度圈 */
+.shake-progress {
+  position: relative;
+  width: 64px; height: 64px;
+  margin-bottom: 12px;
+}
+.shake-progress svg {
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%) rotate(-90deg);
+}
+.progress-track { fill: none; stroke: rgba(201,168,76,0.15); stroke-width: 3; }
+.progress-fill {
+  fill: none; stroke: var(--gold); stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 163;
+  stroke-dashoffset: 163;
+  transition: stroke-dashoffset .3s ease;
+}
+.shake-count {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; color: var(--gold); font-weight: 700;
+}
+
+/* ══════════════════════
+   S2: 掉签动画
+══════════════════════ */
+#s2 { padding-top: 80px; }
+
+.falling-stick-wrap {
+  position: relative;
+  width: min(300px, 85vw);
+  height: 340px;
+  margin-bottom: 20px;
+}
+
+.falling-stick {
+  position: absolute;
+  width: 12px;
+  left: 50%; transform: translateX(-50%);
+  top: 0;
+  border-radius: 3px 3px 1px 1px;
+  transform-origin: top center;
+  animation: fallStick 1.2s cubic-bezier(.25,.46,.45,.94) forwards;
+}
+@keyframes fallStick {
+  0%  { top: 0; transform: translateX(-50%) rotate(0deg) scaleY(0); opacity:0; }
+  10% { opacity:1; transform: translateX(-50%) rotate(5deg) scaleY(1); }
+  60% { top: 60%; transform: translateX(calc(-50% + 20px)) rotate(15deg); }
+  85% { top: 82%; transform: translateX(calc(-50% + 8px)) rotate(3deg); }
+  100%{ top: 85%; transform: translateX(calc(-50% + 8px)) rotate(3deg); }
+}
+
+/* 地面反光 */
+.floor-glow {
+  position: absolute; bottom: 40px; left: 50%;
+  transform: translateX(-50%);
+  width: 80px; height: 8px;
+  background: radial-gradient(ellipse, rgba(201,168,76,0.3), transparent);
+  filter: blur(4px);
+  animation: floorPulse 1.5s ease-in-out infinite alternate;
+}
+@keyframes floorPulse { from{opacity:.4}to{opacity:.9} }
+
+/* ══════════════════════
+   S3: 签文
+══════════════════════ */
+#s3 {
+  padding: 80px 16px 20px;
+  gap: 0;
+  overflow-y: auto;
+  max-height: 100vh;
+  align-items: center;
+  justify-content: flex-start;
+  padding-bottom: 32px;
+}
+
+/* 签号 + 等级徽章 */
+.sign-badge-row {
+  display: flex; align-items: center; gap: 16px;
+  margin-bottom: 16px;
+}
+
+.sign-num {
+  font-size: 13px;
+  color: var(--ink-d);
+  letter-spacing: 3px;
+}
+
+.sign-level {
+  padding: 4px 16px;
+  font-size: 13px;
+  letter-spacing: 4px;
+  font-weight: 700;
+  position: relative;
+}
+.sign-level::before {
+  content: '';
+  position: absolute; inset: 0;
+  opacity: .15;
+}
+.level-daji  { color: #f0c040; border: 1px solid #c09020; }
+.level-daji::before  { background: #c09020; }
+.level-ji    { color: #70d080; border: 1px solid #408050; }
+.level-ji::before    { background: #408050; }
+.level-ping  { color: #90b0d0; border: 1px solid #507090; }
+.level-ping::before  { background: #507090; }
+.level-xiong { color: #d08050; border: 1px solid #905030; }
+.level-xiong::before { background: #905030; }
+.level-daxiong { color: #d04040; border: 1px solid #902020; }
+.level-daxiong::before { background: #902020; }
+
+/* 签纸 */
+.fortune-paper {
+  width: min(360px, 92vw);
+  position: relative;
+  background: linear-gradient(170deg, #f8edd0, #ede0b8, #f0e4c4);
+  border: 1px solid var(--paper-d);
+  padding: 24px 24px 20px;
+  box-shadow:
+    0 0 0 4px rgba(201,168,76,0.1),
+    0 0 30px rgba(201,168,76,0.12),
+    inset 0 0 40px rgba(200,160,80,0.08);
+  animation: paperReveal .8s cubic-bezier(.2,.9,.3,1) forwards;
+}
+@keyframes paperReveal {
+  from { opacity:0; transform: translateY(20px) rotateX(8deg) scale(.96); }
+  to   { opacity:1; transform: translateY(0) rotateX(0) scale(1); }
+}
+
+/* 纸张纹理 */
+.fortune-paper::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+/* 上下折痕 */
+.paper-fold {
+  position: absolute; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent 5%, rgba(160,120,60,.18) 50%, transparent 95%);
+}
+
+/* 签号章 */
+.paper-stamp {
+  position: absolute; top: 14px; right: 14px;
+  width: 40px; height: 40px;
+  border: 2px solid rgba(160,40,20,.35);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700;
+  color: rgba(160,40,20,.6);
+  transform: rotate(-12deg);
+}
+.paper-stamp svg {
+  width: 28px; height: 28px;
+}
+.paper-header {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(160,120,60,.2);
+}
+
+.paper-icon { font-size: 22px; }
+
+.paper-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #3a2810;
+  letter-spacing: 2px;
+}
+
+.paper-sub {
+  font-size: 11px;
+  color: #806040;
+  letter-spacing: 2px;
+  margin-top: 2px;
+}
+
+/* 古文诗句 */
+.verse-block {
+  text-align: center;
+  margin-bottom: 16px;
+  padding: 12px 0;
+  border-top: 1px dashed rgba(160,120,60,.2);
+  border-bottom: 1px dashed rgba(160,120,60,.2);
+}
+
+.verse-line {
+  font-size: 17px;
+  font-weight: 600;
+  color: #2a1808;
+  letter-spacing: 4px;
+  line-height: 2.2;
+}
+
+.verse-source {
+  font-size: 11px;
+  color: #906040;
+  letter-spacing: 2px;
+  margin-top: 4px;
+}
+
+/* 现代解读 */
+.interp-section { margin-bottom: 14px; }
+
+.interp-label {
+  font-size: 11px;
+  color: var(--gold-d);
+  letter-spacing: 3px;
+  margin-bottom: 6px;
+  display: flex; align-items: center; gap: 6px;
+}
+.interp-label::after {
+  content: '';
+  flex: 1; height: 1px;
+  background: linear-gradient(90deg, rgba(138,96,32,.3), transparent);
+}
+
+.interp-text {
+  font-size: 13.5px;
+  color: #3a2818;
+  line-height: 1.9;
+  letter-spacing: .5px;
+}
+
+/* 运势细项 */
+.fortune-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.fortune-item {
+  text-align: center;
+  padding: 8px 4px;
+  background: rgba(160,120,60,.07);
+  border: 1px solid rgba(160,120,60,.15);
+  border-radius: 2px;
+}
+.fitem-label { font-size: 10px; color: #806040; letter-spacing: 1px; margin-bottom: 4px; }
+.fitem-val   { font-size: 13px; color: #2a1808; font-weight: 600; }
+
+/* 宜忌 */
+.yiji-row {
+  display: flex; gap: 8px; margin-bottom: 6px;
+}
+.yiji-block {
+  flex: 1; padding: 8px 10px;
+  border-radius: 2px;
+}
+.yi-block  { background: rgba(80,160,80,.07); border:1px solid rgba(80,160,80,.2); }
+.ji-block  { background: rgba(160,80,80,.07); border:1px solid rgba(160,80,80,.2); }
+.yiji-title { font-size: 11px; font-weight: 700; letter-spacing: 2px; margin-bottom: 4px; }
+.yi-block .yiji-title  { color: #407050; }
+.ji-block .yiji-title  { color: #704040; }
+.yiji-text  { font-size: 12px; color: #3a2818; line-height: 1.7; letter-spacing: .5px; }
+
+/* 底部一句话 */
+.paper-footer {
+  text-align: right;
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(160,120,60,.15);
+  font-size: 11px;
+  color: #806040;
+  letter-spacing: 1px;
+}
+
+/* 底部按钮 */
+.btn-row {
+  display: flex; gap: 12px; margin-top: 16px;
+  flex-wrap: wrap; justify-content: center;
+}
+.btn-again {
+  padding: 10px 28px;
+  background: transparent;
+  border: 1px solid var(--gold-d);
+  color: var(--gold);
+  font-family: inherit;
+  font-size: 13px;
+  letter-spacing: 3px;
+  cursor: pointer;
+  transition: all .25s;
+}
+.btn-again:hover { background: rgba(201,168,76,.1); border-color: var(--gold); }
+
+/* ══════════════════════
+   科技感悬浮元素
+══════════════════════ */
+.tech-corner {
+  position: fixed;
+  font-size: 10px;
+  color: rgba(201,168,76,0.18);
+  letter-spacing: 2px;
+  font-family: 'Courier New', monospace;
+  z-index: 5;
+  pointer-events: none;
+}
+.tc-tl { top:12px; left: 12px; }
+.tc-tr { top:12px; right: 12px; text-align:right; }
+.tc-bl { bottom:12px; left: 12px; }
+.tc-br { bottom:12px; right: 12px; text-align:right; }
+
+
+/* ══════════════════════
+   Toast 提示
+}
+
+/* ══════════════════════
+   Toast 提示
+══════════════════════ */
+.toast {
+  position: fixed; top: 72px; left: 50%; transform: translateX(-50%) translateY(-8px);
+  background: rgba(12,16,24,0.95);
+  border: 1px solid var(--gold-d);
+  color: var(--gold);
+  padding: 8px 20px;
+  font-size: 12px;
+  letter-spacing: 2px;
+  opacity: 0; transition: all .3s; z-index: 100; pointer-events: none;
+  white-space: nowrap;
+}
+.toast.show { opacity:1; transform: translateX(-50%) translateY(0); }
+
+/* 滚动条 */
+#s3::-webkit-scrollbar { width: 3px; }
+#s3::-webkit-scrollbar-track { background: transparent; }
+#s3::-webkit-scrollbar-thumb { background: var(--gold-d); }
+
+/* ══════════════════════
+   底部功能栏
+══════════════════════ */
+.action-bar {
+  display: flex; gap: 10px; margin-top: 14px;
+  flex-wrap: wrap; justify-content: center;
+}
+.act-btn {
+  padding: 9px 18px;
+  background: transparent;
+  border: 1px solid;
+  font-family: inherit;
+  font-size: 12px;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all .25s;
+  display: flex; align-items: center; gap: 6px;
+}
+.act-btn.gold  { border-color: var(--gold-d);  color: var(--gold); }
+.act-btn.cyan  { border-color: var(--cyan-d);  color: var(--cyan); }
+.act-btn.red   { border-color: rgba(160,80,60,.5); color: #d09070; }
+.act-btn.green { border-color: rgba(80,140,80,.5); color: #80c090; }
+.act-btn:hover { background: rgba(255,255,255,0.04); }
+
+/* ══════════════════════
+   弹窗遮罩
+══════════════════════ */
+.modal-mask {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(4,6,12,0.88);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+  animation: maskIn .3s ease;
+}
+@keyframes maskIn { from{opacity:0} to{opacity:1} }
+.modal-mask.hidden { display: none; }
+
+.modal-box {
+  width: min(420px, 94vw);
+  max-height: 85vh;
+  overflow-y: auto;
+  background: #0c1018;
+  border: 1px solid var(--gold-d);
+  box-shadow: 0 0 40px rgba(201,168,76,0.12);
+  animation: boxIn .35s cubic-bezier(.2,.9,.3,1);
+  position: relative;
+}
+.modal-box--wide { width: min(520px, 94vw); }
+@keyframes boxIn { from{transform:translateY(20px) scale(.97);opacity:0} to{transform:none;opacity:1} }
+.modal-box::-webkit-scrollbar { width: 3px; }
+.modal-box::-webkit-scrollbar-thumb { background: var(--gold-d); }
+
+.modal-head {
+  padding: 16px 20px 14px;
+  border-bottom: 1px solid rgba(201,168,76,0.15);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.modal-title { font-size: 14px; color: var(--gold); letter-spacing: 3px; }
+.modal-close {
+  width: 28px; height: 28px;
+  border: 1px solid rgba(201,168,76,0.3);
+  color: var(--ink-d); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; background: transparent;
+  transition: all .2s;
+}
+.modal-close:hover { border-color: var(--gold); color: var(--gold); }
+.modal-body { padding: 20px; }
+
+/* ══════════════════════
+   24小时拦截页 S-BLOCKED
+══════════════════════ */
+#s-blocked { gap: 24px; padding: 80px 24px 40px; }
+
+.blocked-icon {
+  width: 80px; height: 80px;
+  position: relative;
+  margin-bottom: 4px;
+  display: flex; align-items: center; justify-content: center;
+}
+.blocked-icon svg {
+  width: 64px; height: 64px;
+  opacity: .55;
+  filter: drop-shadow(0 0 20px rgba(201,168,76,0.2));
+  animation: blockedIconPulse 3s ease-in-out infinite;
+}
+.blocked-icon::after {
+  content: '';
+  position: absolute;
+  width: 80px; height: 80px;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  border: 1px solid rgba(201,168,76,0.12);
+  border-radius: 50%;
+  animation: compassSpin 20s linear infinite;
+}
+@keyframes blockedIconPulse {
+  0%,100% { opacity: .5; transform: scale(1); }
+  50% { opacity: .8; transform: scale(1.08); }
+}
+
+.blocked-wenyan {
+  width: min(360px, 90vw);
+  position: relative;
+  padding: 24px 28px 20px;
+  text-align: center;
+  background: rgba(10,14,24,0.7);
+  border: 1px solid rgba(201,168,76,0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.blocked-wenyan::before,
+.blocked-wenyan::after {
+  content: '';
+  position: absolute;
+  width: 16px; height: 16px;
+  border-color: var(--gold-d); border-style: solid;
+  opacity: .5;
+}
+.blocked-wenyan::before { top:-1px; left:-1px; border-width:2px 0 0 2px; }
+.blocked-wenyan::after  { bottom:-1px; right:-1px; border-width:0 2px 2px 0; }
+
+.wenyan-main {
+  font-size: 18px; color: var(--gold-l);
+  letter-spacing: 4px; line-height: 2.2;
+  margin-bottom: 12px;
+  text-shadow: 0 0 20px rgba(201,168,76,0.2);
+}
+.wenyan-sub {
+  font-size: 12px; color: var(--ink-d);
+  letter-spacing: 2px; line-height: 1.9;
+  opacity: .7;
+}
+.countdown-row {
+  display: flex; align-items: center; gap: 10px;
+  justify-content: center; margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(201,168,76,0.1);
+}
+.countdown-label { font-size: 11px; color: var(--ink-d); letter-spacing: 2px; }
+.countdown-val {
+  font-size: 18px; color: var(--gold);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 2px;
+  padding: 4px 14px;
+  border: 1px solid rgba(201,168,76,0.25);
+  background: rgba(201,168,76,0.04);
+  min-width: 90px; text-align: center;
+  font-weight: 600;
+}
+
+.blocked-actions {
+  display: flex; flex-direction: column; gap: 12px;
+  align-items: center; width: min(360px, 90vw);
+}
+.blocked-btn {
+  width: 100%;
+  position: relative;
+  padding: 16px 24px;
+  background: rgba(10,14,24,0.5);
+  border: 1px solid rgba(201,168,76,0.2);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 14px;
+  letter-spacing: 4px;
+  cursor: pointer;
+  display: flex; align-items: center; gap: 16px;
+  transition: all .35s;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  overflow: hidden;
+}
+.blocked-btn::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(201,168,76,0.08), transparent);
+  opacity: 0;
+  transition: opacity .35s;
+}
+.blocked-btn::after {
+  content: '◆';
+  position: absolute;
+  right: 16px; top: 50%; transform: translateY(-50%);
+  font-size: 8px;
+  color: rgba(201,168,76,0.2);
+  transition: all .35s;
+}
+.blocked-btn:hover {
+  border-color: rgba(201,168,76,0.5);
+  background: rgba(15,20,32,0.7);
+  color: var(--gold-l);
+  padding-left: 32px;
+}
+.blocked-btn:hover::before { opacity: 1; }
+.blocked-btn:hover::after {
+  color: var(--gold);
+  right: 14px;
+  text-shadow: 0 0 8px rgba(201,168,76,0.4);
+}
+.blocked-btn-icon {
+  width: 28px; height: 28px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(201,168,76,0.2);
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: all .35s;
+}
+.blocked-btn-icon::before {
+  font-size: 12px;
+  color: var(--gold-d);
+  transition: color .35s;
+  line-height: 1;
+  letter-spacing: 0;
+}
+.blocked-btn:hover .blocked-btn-icon {
+  border-color: var(--gold-d);
+  background: rgba(201,168,76,0.08);
+}
+.blocked-btn:hover .blocked-btn-icon::before { color: var(--gold); }
+.blocked-btn:nth-child(1) .blocked-btn-icon::before { content: '香'; }
+.blocked-btn:nth-child(2) .blocked-btn-icon::before { content: '解'; }
+.blocked-btn:nth-child(3) .blocked-btn-icon::before { content: '傳'; }
+.blocked-btn-sub {
+  font-size: 11px; color: var(--ink-d);
+  letter-spacing: 2px; margin-top: 3px;
+  opacity: .6;
+  transition: opacity .35s;
+}
+.blocked-btn:hover .blocked-btn-sub { opacity: .9; }
+
+/* ══════════════════════
+   供香弹窗
+══════════════════════ */
+.incense-stage {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 8px;
+  padding: 10px 0 16px;
+}
+
+.incense-burner {
+  position: relative;
+  width: 80px; height: 80px;
+  cursor: pointer;
+}
+.burner-body {
+  position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 60px; height: 44px;
+  background: linear-gradient(180deg, #6a4820, #3a2010);
+  border-radius: 4px 4px 8px 8px;
+  border: 1px solid var(--gold-d);
+}
+.burner-top {
+  position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
+  width: 70px; height: 12px;
+  background: linear-gradient(180deg, var(--gold-d), #6a4820);
+  border-radius: 4px;
+  border: 1px solid var(--gold);
+}
+.incense-stick {
+  position: absolute; bottom: 52px; left: 50%; transform: translateX(-50%);
+  width: 3px; height: 50px;
+  background: linear-gradient(180deg, #c8a050, #8a6030);
+  border-radius: 2px;
+  transform-origin: bottom center;
+}
+.incense-smoke {
+  position: absolute; bottom: 100px; left: 50%;
+  transform: translateX(-50%);
+  display: flex; gap: 4px;
+}
+.smoke-particle {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: rgba(201,168,76,0.4);
+  animation: smokeRise 2s ease-in-out infinite;
+}
+.smoke-particle:nth-child(2) { animation-delay: .5s; width:5px; height:5px; }
+.smoke-particle:nth-child(3) { animation-delay: 1s; width:4px; height:4px; }
+@keyframes smokeRise {
+  0%   { transform: translateY(0) scale(1); opacity:.6; }
+  100% { transform: translateY(-40px) scale(2.5); opacity:0; }
+}
+
+.incense-title {
+  font-size: 13px; color: var(--gold); letter-spacing: 3px; margin-top: 4px;
+}
+.incense-wish-input {
+  width: 100%;
+  background: rgba(201,168,76,0.05);
+  border: 1px solid rgba(201,168,76,0.2);
+  padding: 10px 14px;
+  font-family: inherit; font-size: 14px;
+  color: var(--ink); letter-spacing: 1px; text-align: center;
+  outline: none; margin-top: 8px;
+  transition: border-color .2s;
+}
+.incense-wish-input:focus { border-color: rgba(201,168,76,0.5); }
+.incense-wish-input::placeholder { color: var(--ink-d); font-size: 12px; }
+
+.incense-btn {
+  width: 100%; margin-top: 12px;
+  padding: 11px;
+  background: transparent; border: 1px solid var(--gold-d);
+  color: var(--gold); font-family: inherit;
+  font-size: 13px; letter-spacing: 4px; cursor: pointer;
+  transition: all .25s;
+}
+.incense-btn:hover { background: rgba(201,168,76,0.1); }
+
+.incense-result {
+  display: none; text-align: center; padding: 16px 0 4px;
+}
+.incense-result.show { display: block; animation: scIn .5s ease; }
+.incense-result-icon { font-size: 36px; margin-bottom: 8px; }
+.incense-result-text {
+  font-size: 14px; color: var(--gold-l);
+  letter-spacing: 2px; line-height: 2;
+}
+.incense-result-sub {
+  font-size: 12px; color: var(--ink-d); letter-spacing: 1px;
+  margin-top: 6px; line-height: 1.8;
+}
+
+/* ══════════════════════
+   签文注解弹窗
+══════════════════════ */
+.annot-section { margin-bottom: 18px; }
+.annot-tag {
+  display: inline-block;
+  padding: 2px 10px;
+  background: rgba(201,168,76,0.1);
+  border: 1px solid rgba(201,168,76,0.25);
+  font-size: 10px; color: var(--gold-d);
+  letter-spacing: 2px; margin-bottom: 8px;
+}
+.annot-text {
+  font-size: 13px; color: var(--ink);
+  line-height: 2; letter-spacing: .5px;
+}
+.annot-verse-full {
+  border-left: 2px solid var(--gold-d);
+  padding: 8px 14px; margin: 10px 0;
+  font-size: 15px; color: var(--gold-l);
+  letter-spacing: 3px; line-height: 2;
+}
+.annot-divider {
+  width: 100%; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(201,168,76,0.2), transparent);
+  margin: 14px 0;
+}
+
+/* ══════════════════════
+   分享弹窗
+══════════════════════ */
+.share-preview {
+  background: #080b14;
+  border-radius: 6px;
+  padding: 8px;
+  margin-bottom: 14px;
+  overflow: hidden;
+}
+#shareCanvas { display: block; width: 100%; height: auto; border-radius: 4px; }
+
+.share-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+.share-btn {
+  flex: 1; min-width: 120px;
+  padding: 10px 16px;
+  background: transparent; border: 1px solid rgba(201,168,76,0.3);
+  color: var(--gold); font-family: inherit;
+  font-size: 12px; letter-spacing: 2px; cursor: pointer;
+  transition: all .25s;
+}
+.share-btn:hover { background: rgba(201,168,76,0.08); border-color: var(--gold); }
+
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════
+  水墨动画背景层
+══════════════════════ -->
+<div class="ink-wash-layer" id="inkWashLayer">
+  <div class="ink-blob"></div>
+  <div class="ink-blob"></div>
+  <div class="ink-blob"></div>
+  <div class="ink-blob"></div>
+  <div class="ink-blob"></div>
+  <div class="ink-speck"></div>
+  <div class="ink-speck"></div>
+  <div class="ink-speck"></div>
+  <div class="ink-speck"></div>
+  <div class="ink-speck"></div>
+  <div class="ink-speck"></div>
+  <div class="ink-speck"></div>
+  <div class="ink-wisp"></div>
+  <div class="ink-wisp"></div>
+  <div class="ink-wisp"></div>
+  <div class="smoke-rise"></div>
+  <div class="smoke-rise"></div>
+  <div class="smoke-rise"></div>
+  <div class="smoke-rise"></div>
+  <div class="smoke-band"></div>
+  <div class="smoke-band"></div>
+  <div class="smoke-band"></div>
+</div>
+
+<!-- ══════════════════════
+  背景：水墨山水 SVG
+══════════════════════ -->
+<svg id="ink-bg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <filter id="ink-blur-lg"><feGaussianBlur stdDeviation="8"/></filter>
+    <filter id="ink-blur"><feGaussianBlur stdDeviation="3"/></filter>
+    <linearGradient id="inkGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#080c16"/>
+      <stop offset="60%" stop-color="#0e1420"/>
+      <stop offset="100%" stop-color="#080c08"/>
+    </linearGradient>
+    <linearGradient id="moonGlow" x1=".5" y1=".5" x2="1" y2="1">
+      <stop offset="0%" stop-color="#d4b060"/>
+      <stop offset="100%" stop-color="#d4b060" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#inkGrad)"/>
+  <!-- 远山 -->
+  <path d="M0,640 Q200,500 380,580 Q520,440 720,540 Q880,400 1080,520 Q1280,420 1480,540 Q1650,460 1920,560 L1920,1080 L0,1080 Z" fill="#0e1a2a" opacity="0.45" filter="url(#ink-blur)"/>
+  <!-- 中远山 -->
+  <path d="M0,700 Q180,560 360,640 Q500,520 680,620 Q840,500 1040,600 Q1220,480 1440,580 Q1620,500 1920,620 L1920,1080 L0,1080 Z" fill="#101e2e" opacity="0.35" filter="url(#ink-blur)"/>
+  <!-- 近山 -->
+  <path d="M0,780 Q220,660 420,740 Q580,620 800,720 Q960,600 1200,720 Q1400,640 1600,740 Q1780,660 1920,780 L1920,1080 L0,1080 Z" fill="#122236" opacity="0.25" filter="url(#ink-blur)"/>
+  <!-- 雾带 -->
+  <ellipse cx="500" cy="680" rx="360" ry="24" fill="#1a2a3c" opacity="0.12" filter="url(#ink-blur-lg)"/>
+  <ellipse cx="1500" cy="640" rx="300" ry="20" fill="#1a2a3c" opacity="0.10" filter="url(#ink-blur-lg)"/>
+  <ellipse cx="960" cy="800" rx="480" ry="30" fill="#1a2a3c" opacity="0.08" filter="url(#ink-blur-lg)"/>
+  <!-- 残月 -->
+  <circle cx="1600" cy="180" r="80" fill="url(#moonGlow)" opacity="0.04"/>
+  <circle cx="1600" cy="180" r="44" fill="#c9a84c" opacity="0.08" filter="url(#ink-blur)"/>
+</svg>
+
+<div class="mist-overlay"></div>
+<div class="vignette"></div>
+
+<!-- 科技角落文字 -->
+<div class="tech-corner tc-tl">天機閣</div>
+<div class="tech-corner tc-tr" id="tc-time">--:--:--</div>
+<div class="tech-corner tc-bl">命盤啟示</div>
+<div class="tech-corner tc-br">搖籤問天</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- 顶部标题 -->
+<div class="header">
+  <div class="title-sub">数玄</div>
+  <div class="title-main">問　天　機</div>
+</div>
+<div class="header-deco">
+  <div class="deco-line"></div>
+  <div class="deco-diamond"></div>
+  <div class="deco-line r"></div>
+</div>
+
+<!-- 主应用 -->
+<div id="app">
+
+  <!-- S0: 输入愿望 -->
+  <div class="screen active" id="s0">
+    <div class="temple-icon">
+      <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+        <g fill="#c9a84c">
+        <path d="M960 594.2c-5.2-3-11.4-1.3-16.8-3.3-1.9-0.1-3.7-0.3-5.6-0.5-5.7-1.7-11.7-0.5-17.6-0.4 0 0.5-0.1 1-0.3 1.5-1.8 1.7-0.3 2.8 1 3 13.1 1.2 25.8 6.9 39.4 4.1-0.1-1.4-0.1-2.9-0.1-4.4zM708.9 331c2.8-0.4 5.7-0.8 8.5-1.1 2.8-0.3 5.2-1 4.2-4.8-2.3 0.1-4.7 0.1-7 0.2h-5.1c-1.7 0-3.4-0.1-5.1-0.1-1.2 2.2-3.9 4.4-2.2 6.8 2.2 3.1 4.4-0.6 6.7-1z m2.3 359.1c-0.6 0.6-1.2 1.1-1.7 1.7-2 1.7-4.5 0.4-6.7 1.1-0.4 0.2-0.6 0.5-0.8 0.9-4.3 1.7-11.1-3.8-12.9 4.7h13.2c2.3 0.1 4.6 0.1 6.8 0.2 3.9 1.3 6.1-1.7 8.9-3.4 2.7-8.4-2.5-6.2-6.8-5.2z m12.2-261.4c-2.2 1.7-2.2 3.5 0 5.3 3.3-0.8 9.2 2.2 9.3-2.4 0.1-4.6-5.9-2.4-9.3-2.9z m65.1 87c1.6-1.9-0.3-3.5-2.1-4.5-2-0.8-4-1.5-6.6-2.5 0.6 2.3 1.1 4.1 1.5 5.9 0.3 0.3 0.4 0.7 0.3 1.1 2.4 2.7 5 2.2 6.9 0zM679.2 694.2c-2.8 0.1-3.9 1.7-3.1 4.5 2.2-0.1 4.4-0.1 6.6-0.2 0.5-2.7-0.7-4.3-3.5-4.3zM127.5 328.9c2.6 0.2 3.4-1.2 2.9-3.6h-4.9c-0.4 1.7-0.3 3.4 2 3.6z" opacity=".8"/>
+        <path d="M838.7 622.1c-5.5-3.4-9.1-8.5-13.6-12.8-5.6-1.1-9.7-4.7-14-8.1 2.3-3.7 5.5-2.3 8.2-2.3 3.1 0 6.4 0 6.9-3.8 0.6-5.2 4-4.9 7.6-4.7 5.8 0.4 11.6 0.8 17.5 1.2 13.1 0.9 26.3-0.4 41.7 2.2-7.2-6.8-13.5-8.2-20.2-8.8-15.6-1.4-31.3 0.8-46.9-2-5.8-1.1-13.5-0.7-15.7 9.2-1 4.6-6.6 5.2-9.8-0.3-0.7-2.3-2.7-3.4-4.6-3.3-7.6 0.3-14.7-3-22.3-2.2-2 0.2-4.7 0.6-5.7-1.2-4.6-7.9-12.6-6.9-19.8-8.3-0.4 0.2-0.9 0.2-1.3 0.1-2.9 0.2-5.5-1.5-8.4-0.9-1.5 0.6-3 1.1-4.6 1.6-0.5 0-1-0.1-1.4-0.1-8.8-4-17.7-3.8-26.6-0.7-0.4-0.2-0.7-0.3-1.1-0.5 0-0.1 0-0.2-0.1-0.2-4.5-3.9-11-3.8-15.7-7.1-5.4-3.8-10.8-4.4-17.1-3.9-8.7 0.6-17.2-2.2-25.7-3.7-4.3-0.8-3.9-3.4-2.9-6.4l1.2-0.6c6.2-3.7 12.1-6.8 18.6 0.1 2.4 2.5 6.5 2.8 10 2.1 7.6-1.5 15.2 0.1 22.5 1.3 22 3.3 43.6 10.3 66.4 6.7 4.4-0.7 8.6-0.8 12.2-3.6 1.4-0.4 2.9-0.7 4.3-0.9h1.5c11.4-0.4 22.5 0.6 33.7 3 14.1 2.9 28.5 6.4 43 1.3 1.9-0.7 4.2-1 6-0.5 10.4 3.1 20.8 0.4 31.1-0.1-2.5-0.5-4.9-0.9-7.4-1.2 2.5-0.3 5-0.2 7.4 1.2 2.1 0.9 4.8 3 6.4 2.4 9-3.6 18.4-1.1 27.5-2.4 3.8-0.6 6.4-2.9 7.9-7.5-6.5 0.6-11.8 4.7-17.6 1.2-6.3-3.8-11.6 2.4-17.5 2.3-1.8 0-3.5-0.1-4.7-1.6 2-4.4 7.1-4.3 10.2-7.1-0.2-5-2.9-7-6.4-3.3-3.9 4.1-8.1 4-12.7 3.4-5.5-0.7-10.6-0.5-16.2 0.9-4.8 1.1-11.5 4.9-15.6-2.5-3.1-2.1-3.9-7-8.7-7.1-10 0.8-19.9 2.1-29.4 5.4-1.7 3.5-4.4 1.6-6.7 1.1-12.3-2.9-24.7-2.4-37-0.7-4.3 0.6-8.5 1-12.6-0.8v0.1c-1.9-2.7-5-2.5-7.7-3.3-9.7-2.9-19.7-0.3-29.5-1.9-3.3-0.5-6.4-0.7-2.8-4.9l0.7 0.2 0.6-0.3c3.5 1.9 6.4 0.7 9-1.8 0.6 0 1.2-0.1 1.9-0.1 0.5-0.6 0.9-1.2 1.4-1.7 2.7 0.6 5.8 0.9 5.9-2.5 0.1-3-3.2-2.6-5.4-2.6-5.1 0-10.3-0.3-14.7 3.2 0.1 0.6 0 1.1-0.1 1.7-3.1 0.4-6.2 1.2-9.3 1.2-6.9-0.1-14.2 3-20.4-2.4-6.1-6.8-11.7-14.8-22.9-11.5-0.9 0.3-1.7 0.4-2.6 0.5h-2.8c-16.5-0.5-33.1-0.3-49.6 0.1h-6.1c-1 0-2 0.2-3 0.4-5.6 0.1-11.1 0.5-16.7 1-2.3 0-4.6-0.1-7-0.1-8.2-0.2-16.4 0.1-24.5 1.8-7.4 3-12.4-3.4-18.7-5-13-3.3-25.8 1-38.7 0 4.9-6.1 11.7-7.4 19-7.2 0.2-0.5 0.3-1 0.3-1.5 11.1 1.4 21.9-1.9 32.9-2.3 10.7-1.5 21.4-3 32-4.5 2.2-0.1 4.4-0.3 6.7-0.4 0.2-0.5 0.3-0.9 0.4-1.4 12-1.7 23.9-4.2 36.2-3.9 13.6-3.2 27.5-2.5 41.3-2.7 3.5-0.1 5.1 2.1 6.7 4.6 2.8 3.5 6 2.1 8.9 0.4 2.9-1.7 5.7-3.6 8.5-5.5 1.8 0.1 3.7 0.2 5.5 0.3 3.9-0.9 7.6-0.7 10.4 2.8 2 1.4 4.2 1.4 6 0 1.3-1 0.9-2.4-0.5-3.3-4.1-1.8-7.5-5.5-12.6-5.1-1-1.7-4.3-1.8-4-4 0.4-2.8 3.5-2.3 5.6-2.7 8.1-1.7 16.4-1.8 24.7-2.1 1.8 0.3 3.8 0.2 5.2 1.8 1.7 0.6 3.5 1.2 5.2 1.8 0.9 1.4 2.3 1.3 3.7 1.8 12.3 3.9 24.5-1.3 36.7 0 0.5-0.2 1.1-0.2 1.6-0.2 17.5 1.6 20.9 0.2 24.7-10.4 0-0.6-0.1-1.2-0.1-1.8v-0.5c0.1 0.4 0.3 0.7 0.7 1.1 11.1 0.1 22.4 1.9 32.7-3.9 4.6-0.1 9.2-0.1 13.8-0.2 3.1-0.6 6.1-1.2 9.1-1.8 3.3-0.3 6.2 1.1 9.3 2.2 7.3 2.5 14.9 2.6 22.5 1.4 3.1-0.5 5.6-2.7 5.5-5.9-0.1-2.9-3.4-2.7-5.6-3-8.6-1.3-17.1-1.7-26-1.3-10.1 0.4-21.2 0.8-28.7-8.8-1.1-0.6-2.3-1.3-3.4-1.9-0.6-0.6-1.2-1.1-1.8-1.7 0.3-3.2-1.7-3.8-4.3-4-10.7-0.9-21.3-2.5-32-2.8-31.1-1-62.2 1.9-93.3-0.4-5.6-4.1-12-4.7-18.6-4.7-3.1 0-6.5 2.6-9.5-0.4-1.1-5.5-3.4-6.5-7.1-1.8-1.1 0.9-3.1 2.6-3.6 2.2-9.2-7.6-18.3-0.1-27.3-0.3-5.9-0.1-11.5-3.4-17.8-2.8-2.7 0.2-5.1-1-3.6-4.9 2-5 1.8-5.1-4.5-5.5-1.4 0.3-2.7 0.6-4.1 0.9-1.4-0.1-2.9-0.2-4.3-0.3-1.6 0.1-3.2 0.2-4.8 0.4v1.1c-0.2 0-0.3 0.1-0.5 0.1-0.7 0.2-1.4 0.3-2.1 0.4-1.1-0.1-2.2-0.1-3.3 0.1-1.1 0-2.2 0.1-3.3 0.5-0.8 0.4-1.6 0.7-2.4 1-2.5 0.1-5.1 0.2-7.6 0.2h-6.1c-2.5 0-5-0.2-7.5-0.4h-1c-1.6-2.8-3.7-5.1-6.7-6.6 0-3.3 3.3-3.3 4.9-4.9 0.1-0.1 0.3-0.2 0.4-0.4 10-4 20.6-5.9 31-8.4 2-0.3 4-0.5 6-0.6 0.8-0.1 1.6-0.4 2.3-0.8 0.3-0.3 0.7-0.5 1-0.7 0.6 0 1.2-0.1 1.8-0.1h8.7c2.7-2 6.2 0.2 8.9-1.6 19.6 2.4 38.8-0.3 57.8-5.2h5.3c2.9 0.1 5.8 0.3 8.7 0.2 1.6 0 4 0.3 4.2-2 0.2-2.8-2.5-2.9-4.3-3.1-3.5-0.3-7.1 0.4-10.4-0.3-6-1.2 0.1-2.5 0.2-3.8 3.7-7-2.9-3.9-5.1-5.1-3.2 3-7.1 1-10.7 1.5-9.3-5.3-18.5 0.4-27.7 0.4-6.2-1.8-11.9 1.6-17.9 1.5-0.1 0-0.3 0.2-0.4 0.5-1.1-0.4-2.2-0.7-3.3-0.8 1.2 0 2.4-0.5 3.6-1.2l15.9-5.4-0.1-0.1c0.9-0.6 1.9-1 2.4-2 4.8-0.5 9.4-1.2 13.4-4.5-5.3 1.5-10.9-1.9-16.2 0-0.9-0.2-1.8-0.1-2.8-0.1-2.5 0.6-5.1 1.1-7.7 1.7-5 1.1-10.1 1.7-15.2 2.7-1.2 0.2-2.5 0.4-3.7 0.8-0.3 0.1-0.6 0.1-0.8 0.1 1.1-0.8 2-1.7-1.3-2.2-1.5-0.2-2.9-0.3-4.4-0.3 0.1 0 0.2-0.1 0.3-0.1 3.2-1.4 6.5-2.6 9.9-3.4 2.1-0.4 4.3-0.7 6.4-1 1.8-0.1 3.7-0.1 5.6 0 2.2 0.2 4.5-0.1 6.6-1h0.4c3.2 0 6.8-2 7.1-6.4-1.3-0.5-2.5-1.1-3.8-1.6-1.1-0.1-2.1-0.1-3.2-0.2-1.3-3.5 1.1-3.5 3.5-3.7 4.7-0.5 9.5 1.7 14.2-0.4 1.6-0.7 3.2-1.3 4.7-2.1 2-1.1 4.8-2.7 3.1-5.2-1.7-2.6-4.5-2-6.4 0.7-6.8 3.1-14.1 1.6-21.1 2.1-2.8 0.2-2-1.9-1.4-3.6 0.6-0.6 1.1-1.3 1.7-1.9 0.5 0 1.1-0.2 1.6-0.4 0.7-3.4 5.6-1.5 6.3-4.9-2.5-3.7-7.6 0.7-9.9-3.3-0.5-0.1-0.9-0.3-1.2-0.6-1.7-1.5-3.4-3.1-5.9-1.9-0.1 0.1-0.3 0.1-0.4 0.2-1.9-1.2-4.1-1.5-6.4-1.6-3.6 1.2-7.2 2.5-6.4 7.5 9.3-2.2 9.3-2.2 9.5 2.9-3.1 1.8-5.8 4.5-9.8 4.1-8.3 1.6-16.3 3.1-24.4-1.6-4.3-2.5-9.7-2.3-14.1 0.9-4 2.8-8.2 3.3-12.8 2.6 0.5-0.6 0.5-1.2 0.1-1.9-4.9-6.8-3.4-11.3 4.2-13 5.3-1.2 11.1-0.6 15.7-4.4 5.6-1.6 3.3-5.4 2.3-8.7-0.8 0-1.6-0.1-2.4-0.1-0.8 1-1.6 1.9-2.4 2.9l-0.1 0.1c-0.2-0.3-0.6-0.6-1-0.9-6.1 0.1-11.9 1-17.6 3.8-6.8 3.4-14.3 1.5-21.5 1.7-5.1 0.1-3.6-6.2-7.1-7.8-1.2 0.1-2.3 0.2-3.5 0.3-2.1 0-4.2 0.1-6.3 0.1-6.6 9.5-14 17-27.3 12.1-3.1-1.1-7.1-0.4-10.1 1.7-3.8 2.7-8.1 3-12.4 3.3-10.6-9.4-19.9-1.9-29.5 2.2-7.4 7.5-16.8 6.8-26.1 6.4-4.9-0.2-9.5 0.1-12.6 4.2-3.6 4.9-7.1 6.4-11.9 1.2-2.4-2.6-4.2-0.2-6.4 1.5-4 3-9.2 2.6-12.6-0.6-2.7-2.5 1.8-4 3.1-5.9 2.6-0.6 5.1-2.1 1.9-4.2-2.7-1.8-4.9-3.9-7.1-6.2-2.6-2.9-5.8-4-9.2-1.2-3.4 2.8-4.5 6.1-1 9.7 1.4 1.5 2.9 2.9 2.8 5.2 2.4 1.2 1.1 3.3 1.2 5.1-0.5-0.1-0.9 0-1.3 0.3-10.9 3.7-18.7-4.9-28.2-6.9-0.5-0.2-1.1-0.2-1.6-0.2-1.6-2.7 0.6-5.7 0.1-9-4.2 3.2-7.7 5.7-11 8.4-2.8 2.3-6.4 6.9-9.3 3.3-4.2-5.1 3.6-4.8 5.3-7.4 0.9-1.3 3.3-2 2.6-4-1-2.8-3.3-1.5-5.1-0.9-1.9 0.6-3.8 1.4-5.7 2-13 4.4-25.1 12.4-39.8 9.8-0.8 1-1.5 2-2.3 3-3.4 1.7-6.9 1.9-10.4 0.1l-0.1 0.1c-5.7-4.1-10.6 0.5-14.1 3-5.8 4-11.5 3.7-16.3 1.2-7.1-3.7-13.4-2.6-20.1-0.2-2.8 1-5.3 2.3-8.4 1.4-1.4 0.5-2.7 1.2-4.1 1.4-5.8 0.6-13 7.1-16.2-3.9-0.5-1.7-2.5-0.8-3.6 0.2-4 3.6-9.2 3.1-14 4-13.1 2.5-26.8 1.1-39.6 5.5-1.1 2.1-4.8 1-5 4.6 3.1 2.8 13.9 0.9 8 9.6-4.7 6.8-1.3 8.5 3.5 11.5 4.6 2.9 9.5 2.1 14.3 2.5 6.3 0.4 12.9-1.2 19 1.2 2.7 1.1 7.3 1.4 6.9 5.5-0.4 4.2-4.4 4.5-8.1 4.7-12.2 0.6-24.3 2-35.6 7.2-9.8 3.2-21.1 4.3-22.7 17.9-2.2 6-7.9 8.4-12.5 11.9-6 1.8-10.3 5.8-13.9 10.8 0.1 1.7 0.2 3.4 0.2 5.1 3.9 1.6 3 2.9 1.3 4.3-0.3-0.1-0.7-0.2-1.1-0.3-1.5 0.2-3 0.3-3.8 1.9 0 2.1-0.1 4.2-0.1 6.3 3.6 1.7 5.1-1.1 7-3.1 6.1-3.8 3.4-10.7 5.5-15.9 7.6-2.4 15.9-3.5 20.1-12.1 4.7 5.3 9.9 9.2-1.1 12.8-6.5 2.1-7.4 11.4-2 15 6.5 4.4 5.6 8.5 1.8 13.8-2.2 3.1-4.5 6.4 1.3 8.8 1.8 0.8 2.9 3.6 4.2 5.4 1.2 0.6 2.3 1.2 3.5 1.9 4.4 7 10.2 13.1 7 23-3.9 12.2 1.6 21.6 14.3 24.1 14.1 2.7 29 1.9 41.8 10.4 1.2 0.8 3.4 0.3 5.1 0.1 4.8-0.6 9.2 0.5 13.7 1.8 10.3 3 20.2 7.7 31.3 6.8 2.1-0.2 4.3 0.3 5.3 2.4 2.6 6 8.5 7.1 13.6 8.4 7.6 1.9 12.7 6.4 17 12.4 2.7 2 5.8 2.4 9 3 10.3 1.7 20.2 3.9 30 8.1 12.9 5.6 26.2 14.2 40.1 12.7 17.5-1.8 31.4 3.3 46.3 10.9 9.9 5 21.7 6.3 28.9 16.2-0.7 4.1 0.8 7.5 3.4 10.6 4.4 3.8 5.5 3.6 6.9-1.8 1.8-3.4 4.6-1.6 7.1-1.4 1.4 3 4.9 1.6 6.9 3.2-0.1 0.6-0.1 1.2-0.2 1.7-0.2 1.4-2.6 2.8-0.5 4.2 1.6 1 2.1-1.1 3.1-1.8 0.9-0.5 2-0.7 3-1 0.6 1 1 2.1 1.7 2.9 3.1 3.9 8.2 7.1 11.6 3.6 3.4-3.6-2.8-5.2-5.1-7.4-0.8-0.8-2.2-1.4-1.5-2.7 1.2-2.4 3.4-1.2 5.3-1.3 2.6 2.1 5.2 4 8.9 3.4 5.9 0.8 8 7.7 13.9 8.5 0.5-0.5 1.1-1 1.6-1.5 0.8-0.2 1-0.6 0.5-1.3-0.1-0.8-0.2-1.5-0.3-2.3 2.2-2.8 4.7-1.7 7-0.4 6.7 3.8 14.2 4.5 21.7 5.6 10.3 1.5 20.4 3.5 30.6 5.3-0.6 1.2-0.5 2.3 0.5 3.5 0.6 0.6 1.1 1.2 1.7 1.9 0.9 0.7 1.7 1.4 2.6 2.1 0.8 0.4 1.6 0.7 2.4 1.1 6.5-1.1 6.5-1.1 3.7-4.7-0.6-0.6-1.3-1.1-1.9-1.7 3.9-3.3 6.4-1 8.3 2.3 1.6 2.8 3.7 4.9 6.9 4.5 22.6-2.7 46.8 7.3 67.6-8.6 7-0.6 14-0.4 21 2-5.6 1.2-11.1 2.5-19.2 4.2 17 3.5 31.3 1.7 45.5-1 10 0.3 18.6-2 22.8-12.3 2.6-1.5 6.2-1.4 7.1-5.2 0.5-0.2 1-0.3 1.5-0.2 1.8 0.1 3.6 0.3 5.4 0.4 1.1-0.1 2.3-0.2 3.4-0.3 2-4.7 5.4-8.5 9-12.1 0.1 0.1 0.2 0.3 0.3 0.4l4.8-0.3c2.2-0.1 4.5-0.3 6.7-0.4 0.1-0.6 0.1-1.2 0.2-1.8l19.5-4.8c9.3 0.5 18.2-0.5 26.3-5.5 1.1-0.6 2.2-1.2 3.4-1.9 3.7-3.7 7.6-0.8 11.3 0 15.9 3.5 32 4.3 48.2 3.2 0.7-5 0.4-9.6-3.5-12z m21.9-59.7h-0.9 0.9zM81.7 449.8c-0.1 0-0.2 0-0.3-0.1h0.1c0.1 0.1 0.2 0.1 0.2 0.1z m-0.1-0.1s-0.1 0 0 0c-0.1 0 0 0 0 0-0.1 0-0.1 0 0 0-0.1 0 0 0 0 0z m521.7 219.9c-0.3-0.2-0.6-0.3-0.9-0.4 0 0 0-0.1 0.1-0.1l0.1-0.1 0.1-0.1c0.2 0.3 0.4 0.5 0.6 0.7z m-67.6-142c-1.2-0.2-2.3-0.5-3.3-0.5 1.1 0 2.2 0.2 3.3 0.5z m135.2 140.9v-0.3c0.1 0.1 0.2 0.1 0.4 0.2-0.1 0.1-0.3 0.1-0.4 0.1z m-58.1-280.4v-0.9c0.3 0 0.6 0 0.8-0.1 0.8 0.6 1.6 0.8 2.4 0.9h-1.5c-0.4-0.2-1.4 0.7-1.7 0.1z m74 103.6s-0.1 0 0 0c0-0.1 0-0.1 0 0 0-0.1 0-0.1 0 0 0-0.1 0-0.1 0 0z m60.9-15.4c0-0.1 0-0.1 0 0 0-0.1 0-0.1 0 0 0-0.1 0 0 0 0z m5 1.4c2.5-3.6 6.6-2.5 9.5-4 0.3 0.2 0.6 0.3 0.9 0.5-1.7 4.6-4.9 6.1-10.4 3.5zM632 369c0.1-0.2 0.1-0.5 0.2-0.7 0.3 0.2 0.6 0.3 0.8 0.5-0.3 0.1-0.7 0.1-1 0.2zM513.1 528.9c-0.9-0.4-2.2 0-2.3-1.4 0-0.3 0.8-0.6 1.3-0.8 0.4-0.1 0.9-0.3 1.3-0.4 5.8 2.7 12.1 0.4 18.4 0.7-0.9 0-1.7 0.3-2.2 1-5.6 0.3-10.9 2.6-16.5 0.9z m90.6 141c1 0.6 2.2 0.8 3 1.6-1.1-0.3-2-1-3-1.6z" opacity=".55"/>
+        <path d="M721.5 388s0 0.1 0 0c-0.1 0.1 0 0 0 0z" opacity=".35"/>
+        <path d="M699.4 390.6c7.4-0.2 15.1 1.3 22.1-2.5 1.1-1.9 4.2-3 2.8-5.7-1.3-2.6-3.8-1.7-6.2-1.6-6.8 0.2-12.5 4.7-19.2 5.2-1.4 0.1-3.1 0.6-2.8 2.5 0.2 1.7 1.9 2.1 3.3 2.1z m-77.8 34.2c-0.5 0.2-1.1 0.3-1.7 0.3-1.5 2.6-0.3 3.6 2.3 3.7 2.8 0.1 5.6 0 8.4 0 4.3-2.6 3-5.2-0.5-6.7-3.1-1.3-6.3-0.3-8.5 2.7z m40.4-4.7c-2.2 0.2-4.2 0.8-3.9 3.6 0.2 1.6 1.4 2.5 3.4 2.2 1.9-0.4 3.7-1.4 3.7-3.8 0.1-1.8-1.6-2.2-3.2-2z m1.7-12.4c-2.3 0.4-5.9-1.3-5.3 3.5h10c-2.2-1.7-3.5-2.6-4.7-3.5z m-63 12.3c1.7-3.7-0.5-3.8-3.2-3.4-0.3-0.2-0.6-0.4-0.9-0.5-3.5 0.9-7.8-1.2-10.8 3 3.4 1.7 6.5 0.9 9.5 0.9 1.8 0.8 3.6 0.4 5.4 0z m329.9 200.1c-5.7-3.1-11.6-5.2-17-3.7h-9.1c-2.3 0-5.7-0.7-5.9 2.1-0.3 3.9 3.5 2.7 5.9 2.9 8.2 0.7 16.9-2.3 24.5 3.3 1.1 0.8 3.2 0.5 3.9-0.8 1.1-2.1-0.8-3-2.3-3.8z m-51.1-12.5l-0.1 0.1c9.4 1.6 18.8 3.3 28.2 4.8 2.3 0.4 5.3 0.3 6.1-2.2 0.9-3.1-2.4-3.4-4.3-4.4-8.5-4.6-17.5-4.8-26.7-2.3-1.1-0.4-2.3-0.8-3.4-1.2-5.1-4.3-11.2-3.8-17.2-3.6l0.1-0.1c-5.2 0.2-10.5 0.3-15.7 0.5-0.7-0.2-1.5-0.4-2.2-0.5-1.5 0.2-3 0.6-3.3 2.1-0.4 2.2 1.4 3 3.1 3.1 4.8 0.2 9.6 0.2 14.4 0.4 1.1 0 2.1 0.1 3.2 0.1 5.5 2.9 11.6 3.5 17.8 3.2zM713 666.7c2.2 0.2 3.3-0.8 3.1-2.4-0.2-2.6-1.6-4.4-4.4-4.4-1.7 0-3.9 0.4-3.4 2.7 0.6 2.5 2.8 3.6 4.7 4.1z m179.8-187.4c-0.6 3.2 2.8 3.7 5.5 4 2.7-1.4 7.8 0.4 8-4.3 0.1-2.9-3.8-2.9-6.3-2.8-2.8 0.1-6.6-0.3-7.2 3.1zM476.2 668.1c-2-0.4-3.3 0.5-3.4 2.7 0 1.7 1.2 2.5 2.7 2.7 1.6 0.2 2.7-0.7 3.1-2.2-0.1-1.7-0.9-2.9-2.4-3.2z m122.2-151.6h18.2c2.3-0.1 4.5-0.2 6.8-0.3 0.2-1.2 4.5-2.9-0.3-3.5-2.2-0.3-4.5 0.1-6.7 0.1-3.5-0.8-7-0.8-10.5-0.1-2.3 0.1-4.9-0.6-7.5 3.8z m111-0.2c-1.9 6.5 3.4 2.4 5.2 3.5-0.7-2.7-2.5-3.8-5.2-3.5z m42.7-2.7c-3.6-2.1-7.4-2.4-11.1-2.4-2.8 0-6.7-0.1-6.8 3.7-0.1 4.8 4.2 2.3 6.6 3v0.1c3.1-2.9 8.7 0.4 11.3-4.4z m11.2 4.6c-0.7 2.3 1.1 2.9 2.9 3.1 1.9 0.2 3.4-0.5 4-2.5 0-1.8-1-2.6-2.6-2.7-1.8-0.1-3.7 0.2-4.3 2.1z m21.5 59.5c-2 0.2-4.6-1.2-5.7 1.5-0.6 1.4 0 3.3 2.2 3.7 0.7-1.5 2.1-1.6 3.4-1.8 4.1 3.4 8.5-0.5 12.7 0.3 3.2-1.9 2.8-3.5-0.5-4.5-4.1-1.1-8.1 0-12.1 0.8z m-0.1 59.5z m3.4-0.1c-1.1 0.1-2.3 0.1-3.4 0.1-0.6 6.9 4.5 2.7 6.9 3.3 1.1 0.3 3.1-1 2.4-2.7-1.4-3.4-3.8-0.9-5.9-0.7z m-40.8 38.8c-2.9 1.3-8.5-1.2-9 3.7-0.3 3.1 4.6 2.4 7.2 2.1 3.2-0.3 8.1 0.5 8.4-3.8 0.2-3.3-4-1.5-6.6-2z m-155.9 9.3c-8.1-0.8-16.3-1.4-24.4 0-2.7 0.5-4.7 2.2-6.5 4.2-1.1 1.1-1.9 2.5-0.7 3.8 0.6 0.7 2.3 1.5 3 1.2 9.3-4.2 19.6-1.7 29-4.5 5.7-2.1 3-4.3-0.4-4.7zM191.9 358.6c1.7-0.2 3.5 2.9 5.1 0.2 1-1.7 1.2-4-0.6-5.3-1.8-1.3-2.9 0.9-4.1 1.8 0.3 1.1-2.6 2-0.4 3.3z m523.9 129.2c5.8 3.9 10.2 1.6 14.3 1.9-3.8-5.9-8.1-3.8-14.3-1.9z m14.4 1.9c0 0.1 0 0.1 0 0z m-41.5-117c0.6-5.5-0.1-5.8-9.1-3.7 1.2 5.6 6 2.6 9.1 3.7z m41.7-0.2c1.8 0 3.5 0.1 5.3 0.1 5-0.6 10.5 2.2 16.1-2.2-5.9-2.7-11.1-1.2-16.1-1.5-1.8 0-3.5 0.1-5.3 0.1-2.9-0.2-5.9-1.1-8.5 2.2 3 1.9 5.8 1.7 8.5 1.3zM611.1 334c2.4-2.3 1-3.3-1.4-3.6-2.8-0.3-3.7 0.7-1.8 3.1 1.1 0.2 2.1 0.4 3.2 0.5z m268.5 292.7c-3.4 1.5-9.6-0.7-9.9 4.7-0.2 3.8 4.5 2.1 7.8 2.5 2.2-1.5 7.3 2 8.1-3.1 0.6-3.4-3.2-5.4-6-4.1z m52-149.2c1.8-0.2 3.3-0.9 3.5-3.2-0.9-2.5-3.2-1.6-5-1.7-1.8-0.1-4.1 0.4-3.9 2.4 0.3 3 3.1 2.7 5.4 2.5z m-9.2-119.6c2.6 0.7 3.5-1.3 4.2-3.7-0.1-2.2-1.6-3.3-3.9-3.3-1.8 0-3.8 0.4-3.9 2.6-0.1 2.2 1.5 3.9 3.6 4.4z m-164.9-13.7c2 0.3 4 0 6 0 1.9-1.8 4.4-1.2 6.6-1.7 4.9-1.2 2.6-3.1 0.6-5-4.3 0-8.6-0.1-12.9 0.1-2 0-4.3 0.2-4.3 3 0 2.4 2 3.3 4 3.6z m145 293.6c-2.6-0.1-3.7 1.6-3.6 3.8 0 2.1 0.7 4.3 3.4 4 2.3-0.3 3.1-2.3 3.5-4.4-0.2-2.1-1.3-3.3-3.3-3.4z m25.6-62.8c0 2.4 2.6 2.4 5.1 2.6 1.2-0.5 3.9-0.2 3.6-3-0.2-2.1-2.4-2-4.1-2-1.9-0.1-4.6 0-4.6 2.4z m-42.9-34.6c2.7 2.7 5.5 3.2 8.5 1.2 1.1-0.7 1-2.2-0.2-2.9-3-1.7-5.9-1.8-8.3 1.7zM391 652.7c-0.2 0.4 0.7 1.8 1.2 1.8 4.3 0.4 3.7-3.7 6.9-6.4-4.6 0.7-7.1 1.7-8.1 4.6zM745.7 364c1.9 0.1 4.1 0.5 5.1-1.9-0.4-2.3-2.2-2.8-3.8-2.7-1.8 0.1-4.5-0.4-4.6 2.5-0.1 1.7 1.8 2.1 3.3 2.1z m-53.5 322c3.9-1.4 1.2-4.2 1.3-6.4-2-0.9-4.1-2.4-5.9 0.3-1.3 1.9-0.9 3.8 0.7 5.3 1.1 1 2.5 1.3 3.9 0.8z m1.3-6.5zM255.7 355.1c1.3-0.2 1.8-1.2 1.5-2.9-0.4-1.4-1.5-1.9-3.1-1.3-1.2 0.4-2 1.2-1.7 2.5 0.4 1.8 1.8 2 3.3 1.7z m580.5 133.6c2.8 1.7 5.1 2 9-1.6-4.2-0.1-6.9-2.1-9 1.6z m-223-113.5c5.6 1.5 9.6 0.6 13.7-0.1-4.1-0.7-8.2-1.6-13.7 0.1z" opacity=".65"/>
+        </g>
+      </svg>
+    </div>
+    <div class="welcome-text">
+      心诚则灵，虔诚一念<br>
+      <span style="font-size:11px;letter-spacing:2px;color:rgba(154,138,112,0.6)"></span>
+    </div>
+    <div class="wish-label">所求之事</div>
+    <div class="wish-input-wrap">
+      <input type="text" class="wish-input" id="wishInput"
+        placeholder="可不填，默认求今日运势"
+        maxlength="20" autocomplete="off"/>
+    </div>
+    <button class="btn-seek" onclick="goShake()"><span>上香求签</span></button>
+  </div>
+
+  <!-- S1: 摇签 -->
+  <div class="screen" id="s1">
+    <div class="shake-hint">
+      手机用户：<b>摇晃设备</b>求签<br>
+      桌面用户：<b>点击签筒</b>或按<b>空格</b>
+    </div>
+
+    <div class="shake-progress">
+      <svg viewBox="0 0 54 54" width="54" height="54">
+        <circle class="progress-track" cx="27" cy="27" r="26"/>
+        <circle class="progress-fill" id="progressCircle" cx="27" cy="27" r="26"/>
+      </svg>
+      <div class="shake-count" id="shakeCount">0</div>
+    </div>
+
+    <div class="tube-wrap" id="tubeWrap" onclick="doShake()">
+      <div class="tube" id="tube">
+        <div class="tube-top"></div>
+        <div class="tube-ring r1"></div>
+        <div class="tube-body">
+          <div class="sticks-container" id="sticksCon"></div>
+          <div class="tube-text">問天機</div>
+        </div>
+        <div class="tube-ring r2"></div>
+        <div class="tube-bottom"></div>
+      </div>
+    </div>
+
+    <div style="font-size:11px;color:rgba(154,138,112,0.5);letter-spacing:3px;margin-top:4px;">
+      需摇晃 <span id="shakeNeed" style="color:var(--gold-d)">5</span> 次
+    </div>
+  </div>
+
+  <!-- S2: 掉签 -->
+  <div class="screen" id="s2">
+    <div style="font-size:13px;color:var(--ink-d);letter-spacing:4px;margin-bottom:20px;">签落有声……</div>
+    <div class="falling-stick-wrap" id="fallingWrap">
+      <div class="floor-glow"></div>
+    </div>
+  </div>
+
+  <!-- S3: 签文展示（由 JS 动态填充内容） -->
+  <div class="screen" id="s3">
+    <div style="padding:8px 0;"></div>
+  </div>
+
+  <!-- S-BLOCKED: 24小时限制 -->
+  <div class="screen" id="s-blocked">
+    <div class="blocked-icon">
+      <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+        <g fill="#c9a84c">
+        <path d="M960 594.2c-5.2-3-11.4-1.3-16.8-3.3-1.9-0.1-3.7-0.3-5.6-0.5-5.7-1.7-11.7-0.5-17.6-0.4 0 0.5-0.1 1-0.3 1.5-1.8 1.7-0.3 2.8 1 3 13.1 1.2 25.8 6.9 39.4 4.1-0.1-1.4-0.1-2.9-0.1-4.4zM708.9 331c2.8-0.4 5.7-0.8 8.5-1.1 2.8-0.3 5.2-1 4.2-4.8-2.3 0.1-4.7 0.1-7 0.2h-5.1c-1.7 0-3.4-0.1-5.1-0.1-1.2 2.2-3.9 4.4-2.2 6.8 2.2 3.1 4.4-0.6 6.7-1z m2.3 359.1c-0.6 0.6-1.2 1.1-1.7 1.7-2 1.7-4.5 0.4-6.7 1.1-0.4 0.2-0.6 0.5-0.8 0.9-4.3 1.7-11.1-3.8-12.9 4.7h13.2c2.3 0.1 4.6 0.1 6.8 0.2 3.9 1.3 6.1-1.7 8.9-3.4 2.7-8.4-2.5-6.2-6.8-5.2z m12.2-261.4c-2.2 1.7-2.2 3.5 0 5.3 3.3-0.8 9.2 2.2 9.3-2.4 0.1-4.6-5.9-2.4-9.3-2.9z m65.1 87c1.6-1.9-0.3-3.5-2.1-4.5-2-0.8-4-1.5-6.6-2.5 0.6 2.3 1.1 4.1 1.5 5.9 0.3 0.3 0.4 0.7 0.3 1.1 2.4 2.7 5 2.2 6.9 0zM679.2 694.2c-2.8 0.1-3.9 1.7-3.1 4.5 2.2-0.1 4.4-0.1 6.6-0.2 0.5-2.7-0.7-4.3-3.5-4.3zM127.5 328.9c2.6 0.2 3.4-1.2 2.9-3.6h-4.9c-0.4 1.7-0.3 3.4 2 3.6z" opacity=".8"/>
+        <path d="M838.7 622.1c-5.5-3.4-9.1-8.5-13.6-12.8-5.6-1.1-9.7-4.7-14-8.1 2.3-3.7 5.5-2.3 8.2-2.3 3.1 0 6.4 0 6.9-3.8 0.6-5.2 4-4.9 7.6-4.7 5.8 0.4 11.6 0.8 17.5 1.2 13.1 0.9 26.3-0.4 41.7 2.2-7.2-6.8-13.5-8.2-20.2-8.8-15.6-1.4-31.3 0.8-46.9-2-5.8-1.1-13.5-0.7-15.7 9.2-1 4.6-6.6 5.2-9.8-0.3-0.7-2.3-2.7-3.4-4.6-3.3-7.6 0.3-14.7-3-22.3-2.2-2 0.2-4.7 0.6-5.7-1.2-4.6-7.9-12.6-6.9-19.8-8.3-0.4 0.2-0.9 0.2-1.3 0.1-2.9 0.2-5.5-1.5-8.4-0.9-1.5 0.6-3 1.1-4.6 1.6-0.5 0-1-0.1-1.4-0.1-8.8-4-17.7-3.8-26.6-0.7-0.4-0.2-0.7-0.3-1.1-0.5 0-0.1 0-0.2-0.1-0.2-4.5-3.9-11-3.8-15.7-7.1-5.4-3.8-10.8-4.4-17.1-3.9-8.7 0.6-17.2-2.2-25.7-3.7-4.3-0.8-3.9-3.4-2.9-6.4l1.2-0.6c6.2-3.7 12.1-6.8 18.6 0.1 2.4 2.5 6.5 2.8 10 2.1 7.6-1.5 15.2 0.1 22.5 1.3 22 3.3 43.6 10.3 66.4 6.7 4.4-0.7 8.6-0.8 12.2-3.6 1.4-0.4 2.9-0.7 4.3-0.9h1.5c11.4-0.4 22.5 0.6 33.7 3 14.1 2.9 28.5 6.4 43 1.3 1.9-0.7 4.2-1 6-0.5 10.4 3.1 20.8 0.4 31.1-0.1-2.5-0.5-4.9-0.9-7.4-1.2 2.5-0.3 5-0.2 7.4 1.2 2.1 0.9 4.8 3 6.4 2.4 9-3.6 18.4-1.1 27.5-2.4 3.8-0.6 6.4-2.9 7.9-7.5-6.5 0.6-11.8 4.7-17.6 1.2-6.3-3.8-11.6 2.4-17.5 2.3-1.8 0-3.5-0.1-4.7-1.6 2-4.4 7.1-4.3 10.2-7.1-0.2-5-2.9-7-6.4-3.3-3.9 4.1-8.1 4-12.7 3.4-5.5-0.7-10.6-0.5-16.2 0.9-4.8 1.1-11.5 4.9-15.6-2.5-3.1-2.1-3.9-7-8.7-7.1-10 0.8-19.9 2.1-29.4 5.4-1.7 3.5-4.4 1.6-6.7 1.1-12.3-2.9-24.7-2.4-37-0.7-4.3 0.6-8.5 1-12.6-0.8v0.1c-1.9-2.7-5-2.5-7.7-3.3-9.7-2.9-19.7-0.3-29.5-1.9-3.3-0.5-6.4-0.7-2.8-4.9l0.7 0.2 0.6-0.3c3.5 1.9 6.4 0.7 9-1.8 0.6 0 1.2-0.1 1.9-0.1 0.5-0.6 0.9-1.2 1.4-1.7 2.7 0.6 5.8 0.9 5.9-2.5 0.1-3-3.2-2.6-5.4-2.6-5.1 0-10.3-0.3-14.7 3.2 0.1 0.6 0 1.1-0.1 1.7-3.1 0.4-6.2 1.2-9.3 1.2-6.9-0.1-14.2 3-20.4-2.4-6.1-6.8-11.7-14.8-22.9-11.5-0.9 0.3-1.7 0.4-2.6 0.5h-2.8c-16.5-0.5-33.1-0.3-49.6 0.1h-6.1c-1 0-2 0.2-3 0.4-5.6 0.1-11.1 0.5-16.7 1-2.3 0-4.6-0.1-7-0.1-8.2-0.2-16.4 0.1-24.5 1.8-7.4 3-12.4-3.4-18.7-5-13-3.3-25.8 1-38.7 0 4.9-6.1 11.7-7.4 19-7.2 0.2-0.5 0.3-1 0.3-1.5 11.1 1.4 21.9-1.9 32.9-2.3 10.7-1.5 21.4-3 32-4.5 2.2-0.1 4.4-0.3 6.7-0.4 0.2-0.5 0.3-0.9 0.4-1.4 12-1.7 23.9-4.2 36.2-3.9 13.6-3.2 27.5-2.5 41.3-2.7 3.5-0.1 5.1 2.1 6.7 4.6 2.8 3.5 6 2.1 8.9 0.4 2.9-1.7 5.7-3.6 8.5-5.5 1.8 0.1 3.7 0.2 5.5 0.3 3.9-0.9 7.6-0.7 10.4 2.8 2 1.4 4.2 1.4 6 0 1.3-1 0.9-2.4-0.5-3.3-4.1-1.8-7.5-5.5-12.6-5.1-1-1.7-4.3-1.8-4-4 0.4-2.8 3.5-2.3 5.6-2.7 8.1-1.7 16.4-1.8 24.7-2.1 1.8 0.3 3.8 0.2 5.2 1.8 1.7 0.6 3.5 1.2 5.2 1.8 0.9 1.4 2.3 1.3 3.7 1.8 12.3 3.9 24.5-1.3 36.7 0 0.5-0.2 1.1-0.2 1.6-0.2 17.5 1.6 20.9 0.2 24.7-10.4 0-0.6-0.1-1.2-0.1-1.8v-0.5c0.1 0.4 0.3 0.7 0.7 1.1 11.1 0.1 22.4 1.9 32.7-3.9 4.6-0.1 9.2-0.1 13.8-0.2 3.1-0.6 6.1-1.2 9.1-1.8 3.3-0.3 6.2 1.1 9.3 2.2 7.3 2.5 14.9 2.6 22.5 1.4 3.1-0.5 5.6-2.7 5.5-5.9-0.1-2.9-3.4-2.7-5.6-3-8.6-1.3-17.1-1.7-26-1.3-10.1 0.4-21.2 0.8-28.7-8.8-1.1-0.6-2.3-1.3-3.4-1.9-0.6-0.6-1.2-1.1-1.8-1.7 0.3-3.2-1.7-3.8-4.3-4-10.7-0.9-21.3-2.5-32-2.8-31.1-1-62.2 1.9-93.3-0.4-5.6-4.1-12-4.7-18.6-4.7-3.1 0-6.5 2.6-9.5-0.4-1.1-5.5-3.4-6.5-7.1-1.8-1.1 0.9-3.1 2.6-3.6 2.2-9.2-7.6-18.3-0.1-27.3-0.3-5.9-0.1-11.5-3.4-17.8-2.8-2.7 0.2-5.1-1-3.6-4.9 2-5 1.8-5.1-4.5-5.5-1.4 0.3-2.7 0.6-4.1 0.9-1.4-0.1-2.9-0.2-4.3-0.3-1.6 0.1-3.2 0.2-4.8 0.4v1.1c-0.2 0-0.3 0.1-0.5 0.1-0.7 0.2-1.4 0.3-2.1 0.4-1.1-0.1-2.2-0.1-3.3 0.1-1.1 0-2.2 0.1-3.3 0.5-0.8 0.4-1.6 0.7-2.4 1-2.5 0.1-5.1 0.2-7.6 0.2h-6.1c-2.5 0-5-0.2-7.5-0.4h-1c-1.6-2.8-3.7-5.1-6.7-6.6 0-3.3 3.3-3.3 4.9-4.9 0.1-0.1 0.3-0.2 0.4-0.4 10-4 20.6-5.9 31-8.4 2-0.3 4-0.5 6-0.6 0.8-0.1 1.6-0.4 2.3-0.8 0.3-0.3 0.7-0.5 1-0.7 0.6 0 1.2-0.1 1.8-0.1h8.7c2.7-2 6.2 0.2 8.9-1.6 19.6 2.4 38.8-0.3 57.8-5.2h5.3c2.9 0.1 5.8 0.3 8.7 0.2 1.6 0 4 0.3 4.2-2 0.2-2.8-2.5-2.9-4.3-3.1-3.5-0.3-7.1 0.4-10.4-0.3-6-1.2 0.1-2.5 0.2-3.8 3.7-7-2.9-3.9-5.1-5.1-3.2 3-7.1 1-10.7 1.5-9.3-5.3-18.5 0.4-27.7 0.4-6.2-1.8-11.9 1.6-17.9 1.5-0.1 0-0.3 0.2-0.4 0.5-1.1-0.4-2.2-0.7-3.3-0.8 1.2 0 2.4-0.5 3.6-1.2l15.9-5.4-0.1-0.1c0.9-0.6 1.9-1 2.4-2 4.8-0.5 9.4-1.2 13.4-4.5-5.3 1.5-10.9-1.9-16.2 0-0.9-0.2-1.8-0.1-2.8-0.1-2.5 0.6-5.1 1.1-7.7 1.7-5 1.1-10.1 1.7-15.2 2.7-1.2 0.2-2.5 0.4-3.7 0.8-0.3 0.1-0.6 0.1-0.8 0.1 1.1-0.8 2-1.7-1.3-2.2-1.5-0.2-2.9-0.3-4.4-0.3 0.1 0 0.2-0.1 0.3-0.1 3.2-1.4 6.5-2.6 9.9-3.4 2.1-0.4 4.3-0.7 6.4-1 1.8-0.1 3.7-0.1 5.6 0 2.2 0.2 4.5-0.1 6.6-1h0.4c3.2 0 6.8-2 7.1-6.4-1.3-0.5-2.5-1.1-3.8-1.6-1.1-0.1-2.1-0.1-3.2-0.2-1.3-3.5 1.1-3.5 3.5-3.7 4.7-0.5 9.5 1.7 14.2-0.4 1.6-0.7 3.2-1.3 4.7-2.1 2-1.1 4.8-2.7 3.1-5.2-1.7-2.6-4.5-2-6.4 0.7-6.8 3.1-14.1 1.6-21.1 2.1-2.8 0.2-2-1.9-1.4-3.6 0.6-0.6 1.1-1.3 1.7-1.9 0.5 0 1.1-0.2 1.6-0.4 0.7-3.4 5.6-1.5 6.3-4.9-2.5-3.7-7.6 0.7-9.9-3.3-0.5-0.1-0.9-0.3-1.2-0.6-1.7-1.5-3.4-3.1-5.9-1.9-0.1 0.1-0.3 0.1-0.4 0.2-1.9-1.2-4.1-1.5-6.4-1.6-3.6 1.2-7.2 2.5-6.4 7.5 9.3-2.2 9.3-2.2 9.5 2.9-3.1 1.8-5.8 4.5-9.8 4.1-8.3 1.6-16.3 3.1-24.4-1.6-4.3-2.5-9.7-2.3-14.1 0.9-4 2.8-8.2 3.3-12.8 2.6 0.5-0.6 0.5-1.2 0.1-1.9-4.9-6.8-3.4-11.3 4.2-13 5.3-1.2 11.1-0.6 15.7-4.4 5.6-1.6 3.3-5.4 2.3-8.7-0.8 0-1.6-0.1-2.4-0.1-0.8 1-1.6 1.9-2.4 2.9l-0.1 0.1c-0.2-0.3-0.6-0.6-1-0.9-6.1 0.1-11.9 1-17.6 3.8-6.8 3.4-14.3 1.5-21.5 1.7-5.1 0.1-3.6-6.2-7.1-7.8-1.2 0.1-2.3 0.2-3.5 0.3-2.1 0-4.2 0.1-6.3 0.1-6.6 9.5-14 17-27.3 12.1-3.1-1.1-7.1-0.4-10.1 1.7-3.8 2.7-8.1 3-12.4 3.3-10.6-9.4-19.9-1.9-29.5 2.2-7.4 7.5-16.8 6.8-26.1 6.4-4.9-0.2-9.5 0.1-12.6 4.2-3.6 4.9-7.1 6.4-11.9 1.2-2.4-2.6-4.2-0.2-6.4 1.5-4 3-9.2 2.6-12.6-0.6-2.7-2.5 1.8-4 3.1-5.9 2.6-0.6 5.1-2.1 1.9-4.2-2.7-1.8-4.9-3.9-7.1-6.2-2.6-2.9-5.8-4-9.2-1.2-3.4 2.8-4.5 6.1-1 9.7 1.4 1.5 2.9 2.9 2.8 5.2 2.4 1.2 1.1 3.3 1.2 5.1-0.5-0.1-0.9 0-1.3 0.3-10.9 3.7-18.7-4.9-28.2-6.9-0.5-0.2-1.1-0.2-1.6-0.2-1.6-2.7 0.6-5.7 0.1-9-4.2 3.2-7.7 5.7-11 8.4-2.8 2.3-6.4 6.9-9.3 3.3-4.2-5.1 3.6-4.8 5.3-7.4 0.9-1.3 3.3-2 2.6-4-1-2.8-3.3-1.5-5.1-0.9-1.9 0.6-3.8 1.4-5.7 2-13 4.4-25.1 12.4-39.8 9.8-0.8 1-1.5 2-2.3 3-3.4 1.7-6.9 1.9-10.4 0.1l-0.1 0.1c-5.7-4.1-10.6 0.5-14.1 3-5.8 4-11.5 3.7-16.3 1.2-7.1-3.7-13.4-2.6-20.1-0.2-2.8 1-5.3 2.3-8.4 1.4-1.4 0.5-2.7 1.2-4.1 1.4-5.8 0.6-13 7.1-16.2-3.9-0.5-1.7-2.5-0.8-3.6 0.2-4 3.6-9.2 3.1-14 4-13.1 2.5-26.8 1.1-39.6 5.5-1.1 2.1-4.8 1-5 4.6 3.1 2.8 13.9 0.9 8 9.6-4.7 6.8-1.3 8.5 3.5 11.5 4.6 2.9 9.5 2.1 14.3 2.5 6.3 0.4 12.9-1.2 19 1.2 2.7 1.1 7.3 1.4 6.9 5.5-0.4 4.2-4.4 4.5-8.1 4.7-12.2 0.6-24.3 2-35.6 7.2-9.8 3.2-21.1 4.3-22.7 17.9-2.2 6-7.9 8.4-12.5 11.9-6 1.8-10.3 5.8-13.9 10.8 0.1 1.7 0.2 3.4 0.2 5.1 3.9 1.6 3 2.9 1.3 4.3-0.3-0.1-0.7-0.2-1.1-0.3-1.5 0.2-3 0.3-3.8 1.9 0 2.1-0.1 4.2-0.1 6.3 3.6 1.7 5.1-1.1 7-3.1 6.1-3.8 3.4-10.7 5.5-15.9 7.6-2.4 15.9-3.5 20.1-12.1 4.7 5.3 9.9 9.2-1.1 12.8-6.5 2.1-7.4 11.4-2 15 6.5 4.4 5.6 8.5 1.8 13.8-2.2 3.1-4.5 6.4 1.3 8.8 1.8 0.8 2.9 3.6 4.2 5.4 1.2 0.6 2.3 1.2 3.5 1.9 4.4 7 10.2 13.1 7 23-3.9 12.2 1.6 21.6 14.3 24.1 14.1 2.7 29 1.9 41.8 10.4 1.2 0.8 3.4 0.3 5.1 0.1 4.8-0.6 9.2 0.5 13.7 1.8 10.3 3 20.2 7.7 31.3 6.8 2.1-0.2 4.3 0.3 5.3 2.4 2.6 6 8.5 7.1 13.6 8.4 7.6 1.9 12.7 6.4 17 12.4 2.7 2 5.8 2.4 9 3 10.3 1.7 20.2 3.9 30 8.1 12.9 5.6 26.2 14.2 40.1 12.7 17.5-1.8 31.4 3.3 46.3 10.9 9.9 5 21.7 6.3 28.9 16.2-0.7 4.1 0.8 7.5 3.4 10.6 4.4 3.8 5.5 3.6 6.9-1.8 1.8-3.4 4.6-1.6 7.1-1.4 1.4 3 4.9 1.6 6.9 3.2-0.1 0.6-0.1 1.2-0.2 1.7-0.2 1.4-2.6 2.8-0.5 4.2 1.6 1 2.1-1.1 3.1-1.8 0.9-0.5 2-0.7 3-1 0.6 1 1 2.1 1.7 2.9 3.1 3.9 8.2 7.1 11.6 3.6 3.4-3.6-2.8-5.2-5.1-7.4-0.8-0.8-2.2-1.4-1.5-2.7 1.2-2.4 3.4-1.2 5.3-1.3 2.6 2.1 5.2 4 8.9 3.4 5.9 0.8 8 7.7 13.9 8.5 0.5-0.5 1.1-1 1.6-1.5 0.8-0.2 1-0.6 0.5-1.3-0.1-0.8-0.2-1.5-0.3-2.3 2.2-2.8 4.7-1.7 7-0.4 6.7 3.8 14.2 4.5 21.7 5.6 10.3 1.5 20.4 3.5 30.6 5.3-0.6 1.2-0.5 2.3 0.5 3.5 0.6 0.6 1.1 1.2 1.7 1.9 0.9 0.7 1.7 1.4 2.6 2.1 0.8 0.4 1.6 0.7 2.4 1.1 6.5-1.1 6.5-1.1 3.7-4.7-0.6-0.6-1.3-1.1-1.9-1.7 3.9-3.3 6.4-1 8.3 2.3 1.6 2.8 3.7 4.9 6.9 4.5 22.6-2.7 46.8 7.3 67.6-8.6 7-0.6 14-0.4 21 2-5.6 1.2-11.1 2.5-19.2 4.2 17 3.5 31.3 1.7 45.5-1 10 0.3 18.6-2 22.8-12.3 2.6-1.5 6.2-1.4 7.1-5.2 0.5-0.2 1-0.3 1.5-0.2 1.8 0.1 3.6 0.3 5.4 0.4 1.1-0.1 2.3-0.2 3.4-0.3 2-4.7 5.4-8.5 9-12.1 0.1 0.1 0.2 0.3 0.3 0.4l4.8-0.3c2.2-0.1 4.5-0.3 6.7-0.4 0.1-0.6 0.1-1.2 0.2-1.8l19.5-4.8c9.3 0.5 18.2-0.5 26.3-5.5 1.1-0.6 2.2-1.2 3.4-1.9 3.7-3.7 7.6-0.8 11.3 0 15.9 3.5 32 4.3 48.2 3.2 0.7-5 0.4-9.6-3.5-12z m21.9-59.7h-0.9 0.9zM81.7 449.8c-0.1 0-0.2 0-0.3-0.1h0.1c0.1 0.1 0.2 0.1 0.2 0.1z m-0.1-0.1s-0.1 0 0 0c-0.1 0 0 0 0 0-0.1 0-0.1 0 0 0-0.1 0 0 0 0 0z m521.7 219.9c-0.3-0.2-0.6-0.3-0.9-0.4 0 0 0-0.1 0.1-0.1l0.1-0.1 0.1-0.1c0.2 0.3 0.4 0.5 0.6 0.7z m-67.6-142c-1.2-0.2-2.3-0.5-3.3-0.5 1.1 0 2.2 0.2 3.3 0.5z m135.2 140.9v-0.3c0.1 0.1 0.2 0.1 0.4 0.2-0.1 0.1-0.3 0.1-0.4 0.1z m-58.1-280.4v-0.9c0.3 0 0.6 0 0.8-0.1 0.8 0.6 1.6 0.8 2.4 0.9h-1.5c-0.4-0.2-1.4 0.7-1.7 0.1z m74 103.6s-0.1 0 0 0c0-0.1 0-0.1 0 0 0-0.1 0-0.1 0 0 0-0.1 0-0.1 0 0z m60.9-15.4c0-0.1 0-0.1 0 0 0-0.1 0-0.1 0 0 0-0.1 0 0 0 0z m5 1.4c2.5-3.6 6.6-2.5 9.5-4 0.3 0.2 0.6 0.3 0.9 0.5-1.7 4.6-4.9 6.1-10.4 3.5zM632 369c0.1-0.2 0.1-0.5 0.2-0.7 0.3 0.2 0.6 0.3 0.8 0.5-0.3 0.1-0.7 0.1-1 0.2zM513.1 528.9c-0.9-0.4-2.2 0-2.3-1.4 0-0.3 0.8-0.6 1.3-0.8 0.4-0.1 0.9-0.3 1.3-0.4 5.8 2.7 12.1 0.4 18.4 0.7-0.9 0-1.7 0.3-2.2 1-5.6 0.3-10.9 2.6-16.5 0.9z m90.6 141c1 0.6 2.2 0.8 3 1.6-1.1-0.3-2-1-3-1.6z" opacity=".55"/>
+        <path d="M721.5 388s0 0.1 0 0c-0.1 0.1 0 0 0 0z" opacity=".35"/>
+        <path d="M699.4 390.6c7.4-0.2 15.1 1.3 22.1-2.5 1.1-1.9 4.2-3 2.8-5.7-1.3-2.6-3.8-1.7-6.2-1.6-6.8 0.2-12.5 4.7-19.2 5.2-1.4 0.1-3.1 0.6-2.8 2.5 0.2 1.7 1.9 2.1 3.3 2.1z m-77.8 34.2c-0.5 0.2-1.1 0.3-1.7 0.3-1.5 2.6-0.3 3.6 2.3 3.7 2.8 0.1 5.6 0 8.4 0 4.3-2.6 3-5.2-0.5-6.7-3.1-1.3-6.3-0.3-8.5 2.7z m40.4-4.7c-2.2 0.2-4.2 0.8-3.9 3.6 0.2 1.6 1.4 2.5 3.4 2.2 1.9-0.4 3.7-1.4 3.7-3.8 0.1-1.8-1.6-2.2-3.2-2z m1.7-12.4c-2.3 0.4-5.9-1.3-5.3 3.5h10c-2.2-1.7-3.5-2.6-4.7-3.5z m-63 12.3c1.7-3.7-0.5-3.8-3.2-3.4-0.3-0.2-0.6-0.4-0.9-0.5-3.5 0.9-7.8-1.2-10.8 3 3.4 1.7 6.5 0.9 9.5 0.9 1.8 0.8 3.6 0.4 5.4 0z m329.9 200.1c-5.7-3.1-11.6-5.2-17-3.7h-9.1c-2.3 0-5.7-0.7-5.9 2.1-0.3 3.9 3.5 2.7 5.9 2.9 8.2 0.7 16.9-2.3 24.5 3.3 1.1 0.8 3.2 0.5 3.9-0.8 1.1-2.1-0.8-3-2.3-3.8z m-51.1-12.5l-0.1 0.1c9.4 1.6 18.8 3.3 28.2 4.8 2.3 0.4 5.3 0.3 6.1-2.2 0.9-3.1-2.4-3.4-4.3-4.4-8.5-4.6-17.5-4.8-26.7-2.3-1.1-0.4-2.3-0.8-3.4-1.2-5.1-4.3-11.2-3.8-17.2-3.6l0.1-0.1c-5.2 0.2-10.5 0.3-15.7 0.5-0.7-0.2-1.5-0.4-2.2-0.5-1.5 0.2-3 0.6-3.3 2.1-0.4 2.2 1.4 3 3.1 3.1 4.8 0.2 9.6 0.2 14.4 0.4 1.1 0 2.1 0.1 3.2 0.1 5.5 2.9 11.6 3.5 17.8 3.2zM713 666.7c2.2 0.2 3.3-0.8 3.1-2.4-0.2-2.6-1.6-4.4-4.4-4.4-1.7 0-3.9 0.4-3.4 2.7 0.6 2.5 2.8 3.6 4.7 4.1z m179.8-187.4c-0.6 3.2 2.8 3.7 5.5 4 2.7-1.4 7.8 0.4 8-4.3 0.1-2.9-3.8-2.9-6.3-2.8-2.8 0.1-6.6-0.3-7.2 3.1zM476.2 668.1c-2-0.4-3.3 0.5-3.4 2.7 0 1.7 1.2 2.5 2.7 2.7 1.6 0.2 2.7-0.7 3.1-2.2-0.1-1.7-0.9-2.9-2.4-3.2z m122.2-151.6h18.2c2.3-0.1 4.5-0.2 6.8-0.3 0.2-1.2 4.5-2.9-0.3-3.5-2.2-0.3-4.5 0.1-6.7 0.1-3.5-0.8-7-0.8-10.5-0.1-2.3 0.1-4.9-0.6-7.5 3.8z m111-0.2c-1.9 6.5 3.4 2.4 5.2 3.5-0.7-2.7-2.5-3.8-5.2-3.5z m42.7-2.7c-3.6-2.1-7.4-2.4-11.1-2.4-2.8 0-6.7-0.1-6.8 3.7-0.1 4.8 4.2 2.3 6.6 3v0.1c3.1-2.9 8.7 0.4 11.3-4.4z m11.2 4.6c-0.7 2.3 1.1 2.9 2.9 3.1 1.9 0.2 3.4-0.5 4-2.5 0-1.8-1-2.6-2.6-2.7-1.8-0.1-3.7 0.2-4.3 2.1z m21.5 59.5c-2 0.2-4.6-1.2-5.7 1.5-0.6 1.4 0 3.3 2.2 3.7 0.7-1.5 2.1-1.6 3.4-1.8 4.1 3.4 8.5-0.5 12.7 0.3 3.2-1.9 2.8-3.5-0.5-4.5-4.1-1.1-8.1 0-12.1 0.8z m-0.1 59.5z m3.4-0.1c-1.1 0.1-2.3 0.1-3.4 0.1-0.6 6.9 4.5 2.7 6.9 3.3 1.1 0.3 3.1-1 2.4-2.7-1.4-3.4-3.8-0.9-5.9-0.7z m-40.8 38.8c-2.9 1.3-8.5-1.2-9 3.7-0.3 3.1 4.6 2.4 7.2 2.1 3.2-0.3 8.1 0.5 8.4-3.8 0.2-3.3-4-1.5-6.6-2z m-155.9 9.3c-8.1-0.8-16.3-1.4-24.4 0-2.7 0.5-4.7 2.2-6.5 4.2-1.1 1.1-1.9 2.5-0.7 3.8 0.6 0.7 2.3 1.5 3 1.2 9.3-4.2 19.6-1.7 29-4.5 5.7-2.1 3-4.3-0.4-4.7zM191.9 358.6c1.7-0.2 3.5 2.9 5.1 0.2 1-1.7 1.2-4-0.6-5.3-1.8-1.3-2.9 0.9-4.1 1.8 0.3 1.1-2.6 2-0.4 3.3z m523.9 129.2c5.8 3.9 10.2 1.6 14.3 1.9-3.8-5.9-8.1-3.8-14.3-1.9z m14.4 1.9c0 0.1 0 0.1 0 0z m-41.5-117c0.6-5.5-0.1-5.8-9.1-3.7 1.2 5.6 6 2.6 9.1 3.7z m41.7-0.2c1.8 0 3.5 0.1 5.3 0.1 5-0.6 10.5 2.2 16.1-2.2-5.9-2.7-11.1-1.2-16.1-1.5-1.8 0-3.5 0.1-5.3 0.1-2.9-0.2-5.9-1.1-8.5 2.2 3 1.9 5.8 1.7 8.5 1.3zM611.1 334c2.4-2.3 1-3.3-1.4-3.6-2.8-0.3-3.7 0.7-1.8 3.1 1.1 0.2 2.1 0.4 3.2 0.5z m268.5 292.7c-3.4 1.5-9.6-0.7-9.9 4.7-0.2 3.8 4.5 2.1 7.8 2.5 2.2-1.5 7.3 2 8.1-3.1 0.6-3.4-3.2-5.4-6-4.1z m52-149.2c1.8-0.2 3.3-0.9 3.5-3.2-0.9-2.5-3.2-1.6-5-1.7-1.8-0.1-4.1 0.4-3.9 2.4 0.3 3 3.1 2.7 5.4 2.5z m-9.2-119.6c2.6 0.7 3.5-1.3 4.2-3.7-0.1-2.2-1.6-3.3-3.9-3.3-1.8 0-3.8 0.4-3.9 2.6-0.1 2.2 1.5 3.9 3.6 4.4z m-164.9-13.7c2 0.3 4 0 6 0 1.9-1.8 4.4-1.2 6.6-1.7 4.9-1.2 2.6-3.1 0.6-5-4.3 0-8.6-0.1-12.9 0.1-2 0-4.3 0.2-4.3 3 0 2.4 2 3.3 4 3.6z m145 293.6c-2.6-0.1-3.7 1.6-3.6 3.8 0 2.1 0.7 4.3 3.4 4 2.3-0.3 3.1-2.3 3.5-4.4-0.2-2.1-1.3-3.3-3.3-3.4z m25.6-62.8c0 2.4 2.6 2.4 5.1 2.6 1.2-0.5 3.9-0.2 3.6-3-0.2-2.1-2.4-2-4.1-2-1.9-0.1-4.6 0-4.6 2.4z m-42.9-34.6c2.7 2.7 5.5 3.2 8.5 1.2 1.1-0.7 1-2.2-0.2-2.9-3-1.7-5.9-1.8-8.3 1.7zM391 652.7c-0.2 0.4 0.7 1.8 1.2 1.8 4.3 0.4 3.7-3.7 6.9-6.4-4.6 0.7-7.1 1.7-8.1 4.6zM745.7 364c1.9 0.1 4.1 0.5 5.1-1.9-0.4-2.3-2.2-2.8-3.8-2.7-1.8 0.1-4.5-0.4-4.6 2.5-0.1 1.7 1.8 2.1 3.3 2.1z m-53.5 322c3.9-1.4 1.2-4.2 1.3-6.4-2-0.9-4.1-2.4-5.9 0.3-1.3 1.9-0.9 3.8 0.7 5.3 1.1 1 2.5 1.3 3.9 0.8z m1.3-6.5zM255.7 355.1c1.3-0.2 1.8-1.2 1.5-2.9-0.4-1.4-1.5-1.9-3.1-1.3-1.2 0.4-2 1.2-1.7 2.5 0.4 1.8 1.8 2 3.3 1.7z m580.5 133.6c2.8 1.7 5.1 2 9-1.6-4.2-0.1-6.9-2.1-9 1.6z m-223-113.5c5.6 1.5 9.6 0.6 13.7-0.1-4.1-0.7-8.2-1.6-13.7 0.1z" opacity=".65"/>
+        </g>
+      </svg>
+    </div>
+    <div class="blocked-wenyan">
+      <div class="wenyan-main" id="blockedWenyan">天机不可频问，<br>且待明日再来。</div>
+      <div class="wenyan-sub">
+        今日签文已落，缘分已定<br>
+        问卦频繁，反乱心神
+      </div>
+      <div class="countdown-row">
+        <span class="countdown-label">距下次求签</span>
+        <span class="countdown-val" id="countdownVal">--:--:--</span>
+      </div>
+    </div>
+    <div class="blocked-actions">
+      <button class="blocked-btn" onclick="openIncense()">
+        <span class="blocked-btn-icon"></span>
+        <div>
+          <div>供香祈福</div>
+          <div class="blocked-btn-sub">虔心祈愿，清香一炷</div>
+        </div>
+      </button>
+      <button class="blocked-btn" onclick="openAnnotation()">
+        <span class="blocked-btn-icon"></span>
+        <div>
+          <div>签文注解</div>
+          <div class="blocked-btn-sub">深解玄机，洞悉天意</div>
+        </div>
+      </button>
+      <button class="blocked-btn" onclick="openShare()">
+        <span class="blocked-btn-icon"></span>
+        <div>
+          <div>分享签文</div>
+          <div class="blocked-btn-sub">留存机缘，传与知音</div>
+        </div>
+      </button>
+    </div>
+  </div>
+
+  <!-- S0、S1、S2、S3 保持原样，先到这里 -->
+
+</div><!-- /app end tag moved below -->
+
+<!-- ══ 弹窗：供香祈福 ══ -->
+<div class="modal-mask hidden" id="modalIncense" onclick="closeModal('modalIncense')">
+  <div class="modal-box" onclick="event.stopPropagation();">
+    <div class="modal-head">
+      <span class="modal-title">供香祈福</span>
+      <button class="modal-close" onclick="closeModal('modalIncense')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="incense-stage">
+        <div class="incense-burner" id="incenseBurner" onclick="lightIncense()">
+          <div class="incense-smoke" id="incenseSmoke" style="display:none;">
+            <div class="smoke-particle"></div>
+            <div class="smoke-particle"></div>
+            <div class="smoke-particle"></div>
+          </div>
+          <div class="incense-stick" id="incenseStickEl"></div>
+          <div class="burner-top"></div>
+          <div class="burner-body"></div>
+        </div>
+        <div class="incense-title">点击香炉，上香祈愿</div>
+      </div>
+      <div id="incensePre">
+        <input type="text" class="incense-wish-input" id="incenseWish"
+          placeholder="写下心中所愿（可不填）" maxlength="20"/>
+        <button class="incense-btn" onclick="offerIncense()">虔心供香</button>
+      </div>
+      <div class="incense-result" id="incenseResult">
+        <div class="incense-result-icon"></div>
+        <div class="incense-result-text" id="incenseResultText"></div>
+        <div class="incense-result-sub" id="incenseResultSub"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 弹窗：签文注解 ══ -->
+<div class="modal-mask hidden" id="modalAnnot" onclick="closeModal('modalAnnot')">
+  <div class="modal-box" onclick="event.stopPropagation();">
+    <div class="modal-head">
+      <span class="modal-title">签文注解</span>
+      <button class="modal-close" onclick="closeModal('modalAnnot')">✕</button>
+    </div>
+    <div class="modal-body" id="annotBody">
+      <div style="color:var(--ink-d);font-size:13px;letter-spacing:2px;">正在加载注解……</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 弹窗：分享签文 ══ -->
+<div class="modal-mask hidden" id="modalShare" onclick="closeModal('modalShare')">
+  <div class="modal-box modal-box--wide" onclick="event.stopPropagation();">
+    <div class="modal-head">
+      <span class="modal-title">分享签文</span>
+      <button class="modal-close" onclick="closeModal('modalShare')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="share-preview">
+        <canvas id="shareCanvas" width="1080" height="1520"></canvas>
+      </div>
+      <div class="share-btns">
+        <button class="share-btn" onclick="downloadShare()">保存图片</button>
+        <button class="share-btn" onclick="copyShareText()">复制签文</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="app-inner"><!-- content placeholder --></div>
+
+
+<script>
+// ══════════════════════
+// 水墨风格 SVG 图标库
+// ══════════════════════
+const INK_ICONS={
+  // 月 — 残月
+  月:'<svg viewBox="0 0 40 40"><path d="M28,8 C35,12 35,28 28,32 C24,34 16,34 12,32 C18,28 20,20 18,12 C16,6 20,4 28,8Z" fill="#c9a84c" opacity=".7"/><ellipse cx="22" cy="20" rx="6" ry="2" fill="#c9a84c" opacity=".08"/></svg>',
+  // 日 — 日轮
+  日:'<svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="10" fill="#c9a84c" opacity=".5"/><circle cx="20" cy="20" r="6" fill="#c9a84c" opacity=".7"/><circle cx="20" cy="20" r="3" fill="#c9a84c" opacity=".9"/></svg>',
+  // 雷 — 雷电
+  雷:'<svg viewBox="0 0 40 40"><polyline points="16,6 12,22 18,20 14,34 28,14 20,16 26,6" fill="none" stroke="#c9a84c" stroke-width="1.5" opacity=".6" stroke-linejoin="round"/></svg>',
+  // 花 — 梅花
+  花:'<svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="2" fill="#c9a84c" opacity=".5"/>'+
+    Array.from({length:5},(_,i)=>{const a=i*72-90;return `<ellipse cx="${20+8*Math.cos(a*Math.PI/180)}" cy="${20+8*Math.sin(a*Math.PI/180)}" rx="6" ry="3" fill="#c9a84c" opacity=".35" transform="rotate(${a},${20+8*Math.cos(a*Math.PI/180)},${20+8*Math.sin(a*Math.PI/180)})"/>`;}).join('')+'</svg>',
+  // 衡 — 天平/衡器
+  衡:'<svg viewBox="0 0 40 40"><line x1="8" y1="26" x2="32" y2="26" stroke="#c9a84c" stroke-width="1.5" opacity=".5"/><line x1="20" y1="26" x2="20" y2="10" stroke="#c9a84c" stroke-width="1.5" opacity=".6"/><circle cx="20" cy="9" r="3" fill="none" stroke="#c9a84c" stroke-width="1" opacity=".7"/></svg>',
+  // 潮 — 波浪
+  潮:'<svg viewBox="0 0 40 40"><path d="M2,22 Q8,14 14,22 Q20,30 26,22 Q32,14 38,22" fill="none" stroke="#c9a84c" stroke-width="1.5" opacity=".5"/><path d="M4,28 Q10,20 16,28 Q22,36 28,28 Q34,20 38,26" fill="none" stroke="#c9a84c" stroke-width="1" opacity=".3"/></svg>',
+  // 暗 — 阴云
+  暗:'<svg viewBox="0 0 40 40"><ellipse cx="16" cy="18" rx="10" ry="7" fill="#c9a84c" opacity=".25"/><ellipse cx="24" cy="20" rx="8" ry="6" fill="#c9a84c" opacity=".2"/><ellipse cx="20" cy="22" rx="14" ry="5" fill="#c9a84c" opacity=".15"/></svg>',
+  // 雨 — 雨滴
+  雨:'<svg viewBox="0 0 40 40">'+
+    Array.from({length:6},(_,i)=>{const x=8+(i%3)*12,y=10+Math.floor(i/3)*12;return `<line x1="${x}" y1="${y}" x2="${x-1}" y2="${y+5}" stroke="#c9a84c" stroke-width="1.5" opacity=".4" stroke-linecap="round"/>`;}).join('')+'</svg>',
+  // 霜 — 霜晶
+  霜:'<svg viewBox="0 0 40 40"><line x1="10" y1="20" x2="30" y2="20" stroke="#c9a84c" stroke-width="1" opacity=".3"/><line x1="20" y1="10" x2="20" y2="30" stroke="#c9a84c" stroke-width="1" opacity=".3"/><line x1="12" y1="12" x2="28" y2="28" stroke="#c9a84c" stroke-width=".6" opacity=".2"/><line x1="28" y1="12" x2="12" y2="28" stroke="#c9a84c" stroke-width=".6" opacity=".2"/></svg>',
+  // 望 — 登高远望
+  望:'<svg viewBox="0 0 40 40"><path d="M2,32 Q10,24 20,28 Q30,20 38,26 L38,34 L2,34Z" fill="#c9a84c" opacity=".25"/><circle cx="28" cy="12" r="2" fill="#c9a84c" opacity=".4"/><path d="M24,14 Q28,8 32,14" fill="none" stroke="#c9a84c" stroke-width="1" opacity=".3"/></svg>',
+  // 火 — 火焰
+  火:'<svg viewBox="0 0 40 40"><path d="M20,4 C24,10 30,14 30,20 C30,28 24,34 20,36 C16,34 10,28 10,20 C10,14 16,10 20,4Z" fill="#c9a84c" opacity=".3"/><path d="M20,10 C22,14 26,16 26,20 C26,26 22,30 20,32 C18,30 14,26 14,20 C14,16 18,14 20,10Z" fill="#c9a84c" opacity=".5"/></svg>',
+  // 生 — 萌芽
+  生:'<svg viewBox="0 0 40 40"><path d="M20,4 Q16,12 18,20 Q20,26 24,30 Q22,22 20,18 Q22,14 26,12 Q22,10 20,4Z" fill="#c9a84c" opacity=".5"/><path d="M14,32 L26,32" stroke="#c9a84c" stroke-width="1.5" opacity=".6" stroke-linecap="round"/><line x1="12" y1="36" x2="28" y2="36" stroke="#c9a84c" stroke-width="1" opacity=".4" stroke-linecap="round"/></svg>',
+  // 战 — 双剑
+  战:'<svg viewBox="0 0 40 40"><line x1="20" y1="4" x2="20" y2="30" stroke="#c9a84c" stroke-width="1.5" opacity=".6"/><line x1="14" y1="8" x2="26" y2="8" stroke="#c9a84c" stroke-width="2" opacity=".5"/><line x1="10" y1="30" x2="30" y2="30" stroke="#c9a84c" stroke-width="1" opacity=".4"/><path d="M12,30 L18,36" stroke="#c9a84c" stroke-width="1" opacity=".3"/><path d="M28,30 L22,36" stroke="#c9a84c" stroke-width="1" opacity=".3"/></svg>',
+  // 桃 — 桃花
+  桃:'<svg viewBox="0 0 40 40">'+
+    Array.from({length:5},(_,i)=>{const a=i*72-90;return `<ellipse cx="${20+7*Math.cos(a*Math.PI/180)}" cy="${20+7*Math.sin(a*Math.PI/180)}" rx="5" ry="2.5" fill="#d08060" opacity=".45" transform="rotate(${a},${20+7*Math.cos(a*Math.PI/180)},${20+7*Math.sin(a*Math.PI/180)})"/>`;}).join('')+
+    '<circle cx="20" cy="20" r="2.5" fill="#c9a84c" opacity=".5"/>'+
+    Array.from({length:5},(_,i)=>{const a=i*72+36;return `<circle cx="${20+6*Math.cos(a*Math.PI/180)}" cy="${20+6*Math.sin(a*Math.PI/180)}" r=".8" fill="#e8d4b0" opacity=".6"/>`;}).join('')+'</svg>',
+  // 山 — 远山
+  山:'<svg viewBox="0 0 40 40"><path d="M2,32 Q10,20 18,28 Q26,14 34,24 Q38,18 40,22 L40,34 L2,34Z" fill="#c9a84c" opacity=".35"/><path d="M2,34 Q10,26 18,30 Q26,20 34,28 Q38,24 40,28 L40,36 L2,36Z" fill="#c9a84c" opacity=".2"/></svg>',
+  // 迷 — 迷雾
+  迷:'<svg viewBox="0 0 40 40"><ellipse cx="16" cy="14" rx="12" ry="4" fill="#c9a84c" opacity=".12"/><ellipse cx="26" cy="18" rx="14" ry="4" fill="#c9a84c" opacity=".1"/><ellipse cx="14" cy="22" rx="16" ry="4" fill="#c9a84c" opacity=".08"/><ellipse cx="24" cy="26" rx="12" ry="3" fill="#c9a84c" opacity=".06"/></svg>',
+  // 鹏 — 飞鹏
+  鹏:'<svg viewBox="0 0 40 40"><path d="M20,4 Q12,12 4,16 L8,14 Q14,12 20,4Z" fill="#c9a84c" opacity=".45"/><path d="M20,4 Q28,12 36,16 L32,14 Q26,12 20,4Z" fill="#c9a84c" opacity=".45"/><path d="M20,4 L20,20 Q16,26 10,30 Q14,28 18,22 L20,20 Q24,26 30,30 Q26,28 22,22Z" fill="#c9a84c" opacity=".3"/></svg>',
+  // 云 — 流云
+  云:'<svg viewBox="0 0 40 40"><ellipse cx="14" cy="18" rx="10" ry="5" fill="#c9a84c" opacity=".18"/><ellipse cx="24" cy="16" rx="8" ry="6" fill="#c9a84c" opacity=".15"/><ellipse cx="18" cy="14" rx="6" ry="4" fill="#c9a84c" opacity=".12"/><path d="M8,20 Q12,22 18,20 Q24,18 30,20 Q34,22 36,20" fill="none" stroke="#c9a84c" stroke-width=".8" opacity=".2"/></svg>',
+  // 移 — 流转变换
+  移:'<svg viewBox="0 0 40 40"><path d="M6,30 C10,18 16,12 22,14" fill="none" stroke="#c9a84c" stroke-width="1.5" opacity=".4" stroke-linecap="round"/><path d="M34,10 C30,22 24,28 18,26" fill="none" stroke="#c9a84c" stroke-width="1.5" opacity=".4" stroke-linecap="round"/><circle cx="22" cy="14" r="2.5" fill="none" stroke="#c9a84c" stroke-width="1" opacity=".5"/><circle cx="18" cy="26" r="2.5" fill="none" stroke="#c9a84c" stroke-width="1" opacity=".5"/></svg>',
+  // 玄 — 太极
+  玄:'<svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="12" fill="none" stroke="#c9a84c" stroke-width="1" opacity=".4"/><path d="M20,8 A6,6 0 0,1 20,20 A6,6 0 0,0 20,32" fill="none" stroke="#c9a84c" stroke-width="1.5" opacity=".5"/><circle cx="20" cy="14" r="2" fill="#c9a84c" opacity=".4"/><circle cx="20" cy="26" r="2" fill="#c9a84c" opacity=".4"/></svg>'
+};
+
+// ══════════════════════
+// 时间显示
+// ══════════════════════
+function updateTime(){
+  const now=new Date();
+  document.getElementById('tc-time').textContent=
+    now.toLocaleTimeString('zh-CN',{hour12:false})+'\n'+
+    now.toLocaleDateString('zh-CN',{month:'2-digit',day:'2-digit'});
+}
+updateTime();setInterval(updateTime,1000);
+
+// ══════════════════════
+// 水墨滴落效果
+// ══════════════════════
+function spawnInkDrip(){
+  const wrap=document.getElementById('inkWashLayer');
+  if(!wrap) return;
+  const drip=document.createElement('div');
+  drip.className='ink-drip';
+  const x=5+Math.random()*90; // 5%-95% 屏幕宽度
+  const delay=Math.random()*8; // 0-8秒随机延迟
+  drip.style.cssText=`left:${x}%;top:-40px;animation-delay:${delay}s;`;
+  const body=document.createElement('div');
+  body.className='ink-drip-body';
+  const splash=document.createElement('div');
+  splash.className='ink-drip-splash';
+  splash.style.cssText=`left:50%;top:${200+Math.random()*100}px;`;
+  drip.appendChild(body);
+  drip.appendChild(splash);
+  wrap.appendChild(drip);
+  // 动画结束后清理
+  setTimeout(()=>drip.remove(), 9000+delay*1000);
+}
+// 每 3-8 秒随机生成一滴墨
+function scheduleInkDrip(){
+  spawnInkDrip();
+  setTimeout(scheduleInkDrip, 3000+Math.random()*5000);
+}
+setTimeout(scheduleInkDrip, 2000);
+
+// ══════════════════════
+// 星空生成
+
+// ══════════════════════
+// 签筒里的签条初始化
+// ══════════════════════
+// 签筒里的签条初始化
+// ══════════════════════
+const STICK_COLORS=[
+  '#c8a050','#b89040','#d4a860','#a07828','#c09848',
+  '#a87030','#bc9040','#d0b060','#906020','#c4a448'
+];
+function initSticks(){
+  const con=document.getElementById('sticksCon');
+  con.innerHTML='';
+  for(let i=0;i<12;i++){
+    const s=document.createElement('div');
+    s.className='stick-item';
+    s.style.cssText=`
+      background:linear-gradient(180deg,${STICK_COLORS[i%10]},#4a2808);
+      transform:rotate(${(Math.random()-.5)*6}deg);
+      height:${85+Math.random()*15}%;
+    `;
+    con.appendChild(s);
+  }
+}
+initSticks();
+
+// ══════════════════════
+// Toast
+// ══════════════════════
+let toastTimer;
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+// ══════════════════════
+// 屏幕切换
+// ══════════════════════
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ══════════════════════
+// 签文数据库（20支签）
+// ══════════════════════
+const LOTS=[
+  {
+    num:'第一签',icon:'月',title:'月照清泉',level:'daji',levelText:'大吉',
+    verse:['水善利萬物而不爭','天之道利而不害'],source:'— 老子·道德經',
+    interp:'天时地利皆在你侧。如水之柔，终能穿石。此签问世事，宜顺势而为，不可强求。近期所谋之事，方向无误，只需耐心等候，水到渠成。',
+    fortune:{事业:'顺遂',感情:'温润',财运:'徐来',健康:'安和'},
+    yi:'出行·谈判·开新局',
+    ji:'急躁·争执·强求结果'
+  },
+  {
+    num:'第二签',icon:'日',title:'旭日东升',level:'daji',levelText:'大吉',
+    verse:['不鳴則已，一鳴驚人','不飛則已，一飛衝天'],source:'— 史記·滑稽列傳',
+    interp:'蛰伏已久，时机已至。此签示意积累已足，破局在即。凡事只差临门一脚，莫要自我怀疑。贵人将至，当把握机缘，主动出击。',
+    fortune:{事业:'大进',感情:'佳音',财运:'丰收',健康:'旺盛'},
+    yi:'投资·求职·表白心意',
+    ji:'拖延·犹豫·错失时机'
+  },
+  {
+    num:'第三签',icon:'雷',title:'雷声初动',level:'ji',levelText:'吉',
+    verse:['千里之行，始于足下','為學日益，為道日損'],source:'— 老子·道德經',
+    interp:'万事起于微末，此签提示你正处于新阶段的起点。不必焦虑进程缓慢，脚踏实地，循序渐进。每一步都在积累，终将抵达彼岸。',
+    fortune:{事业:'稳进',感情:'渐暖',财运:'积累',健康:'平稳'},
+    yi:'学习·规划·打基础',
+    ji:'贪多·求快·眼高手低'
+  },
+  {
+    num:'第四签',icon:'花',title:'春风化雨',level:'ji',levelText:'吉',
+    verse:['隨風潛入夜，潤物細無聲','好雨知時節，當春乃發生'],source:'— 杜甫·春夜喜雨',
+    interp:'吉兆如春雨，润物于无声。人际关系将有良性转机，误解得以消除。情感方面柔软以待，感情自会升温。凡事勿急，静待花开。',
+    fortune:{事业:'平顺',感情:'温暖',财运:'小得',健康:'调和'},
+    yi:'修复关系·倾听·陪伴',
+    ji:'争论对错·固执己见'
+  },
+  {
+    num:'第五签',icon:'衡',title:'平衡之道',level:'ping',levelText:'平',
+    verse:['禍兮福之所倚，福兮禍之所伏','知足者富，強行者有志'],source:'— 老子·道德經',
+    interp:'此签不吉不凶，乃平稳过渡之象。当下局势稳定，但缺乏突破契机。宜守成而不冒进，做好本职，不必强求改变。时机未到，养精蓄锐为上策。',
+    fortune:{事业:'维持',感情:'平淡',财运:'不增不减',健康:'注意休息'},
+    yi:'休养·总结·蓄力',
+    ji:'冒险投机·大额消费'
+  },
+  {
+    num:'第六签',icon:'潮',title:'浪潮涌动',level:'ping',levelText:'平',
+    verse:['逝者如斯夫，不捨晝夜','知常容，容乃公，公乃王'],source:'— 論語·子罕 / 老子',
+    interp:'时光流逝，当下处于变化的洪流中。顺流则易，逆流则难。此签建议你随势调整，不必对抗大环境，找准自己的节奏，方可稳中求进。',
+    fortune:{事业:'变动中',感情:'需沟通',财运:'起伏',健康:'留意情绪'},
+    yi:'适应变化·放下执念',
+    ji:'强行固守·拒绝沟通'
+  },
+  {
+    num:'第七签',icon:'暗',title:'暗夜行路',level:'xiong',levelText:'凶',
+    verse:['行路難，行路難，多歧路，今安在','長風破浪會有時，直掛雲帆濟滄海'],source:'— 李白·行路難',
+    interp:'前路有阻，近期事务多有波折。然而凶中有转机——挫折是必经历练，非末路。此时最忌放弃，坚持度过低谷期，峰回路转之日不远。谨言慎行，避免冲突。',
+    fortune:{事业:'受阻',感情:'摩擦',财运:'谨慎',健康:'留意'},
+    yi:'低调行事·忍耐·求助他人',
+    ji:'冲动决策·投资·公开争执'
+  },
+  {
+    num:'第八签',icon:'雨',title:'风雨欲来',level:'xiong',levelText:'凶',
+    verse:['山雨欲來風滿樓','黑雲壓城城欲摧'],source:'— 许浑·咸阳城西楼 / 李贺',
+    interp:'近期压力集中而来，处境颇为艰难。此签警示你做好迎接挫折的心理准备，提前布防，减少损失。核心是守住底线，不扩大战线，静待风雨过去。',
+    fortune:{事业:'多阻',感情:'矛盾',财运:'宜守',健康:'注意心境'},
+    yi:'收缩战线·稳固根基',
+    ji:'扩张·借贷·意气用事'
+  },
+  {
+    num:'第九签',icon:'霜',title:'寒霜试骨',level:'daxiong',levelText:'大凶',
+    verse:['天將降大任於是人也，必先苦其心志','勞其筋骨，餓其體膚，空乏其身'],source:'— 孟子·告子下',
+    interp:'大凶之签，乃最严峻的磨砺之象。近期将面临重大考验，事业感情财运皆有冲击。然此签同样隐藏着蜕变契机——唯有熬过此劫，方成大器。切忌冒进，静守待机。',
+    fortune:{事业:'受挫',感情:'危机',财运:'严防损失',健康:'多加休养'},
+    yi:'静心·反思·寻求支持',
+    ji:'一切重大决策·冲动行事'
+  },
+  {
+    num:'第十签',icon:'望',title:'静夜思远',level:'ji',levelText:'吉',
+    verse:['舉頭望明月，低頭思故鄉','此夜曲中聞折柳，何人不起故園情'],source:'— 李白 / 李白·春夜洛城闻笛',
+    interp:'此签主思念与远谋。近期心中若有牵挂之事，不妨主动沟通。远方的机缘正在向你靠近，保持开放心态。旧人重逢或有惊喜，珍惜身边人。',
+    fortune:{事业:'有贵人',感情:'有惊喜',财运:'有进账',健康:'调养心神'},
+    yi:'联络旧友·异地机缘·表达感情',
+    ji:'封闭自我·逃避沟通'
+  },
+  {
+    num:'第十一签',icon:'火',title:'炉火纯青',level:'daji',levelText:'大吉',
+    verse:['千錘百煉出深山，烈火焚燒若等閒','粉骨碎身渾不怕，要留清白在人間'],source:'— 于谦·石灰吟',
+    interp:'历经磨砺，此时你正处于能力与时机双重成熟的节点。大吉之征，诸事可为。勇敢推进计划，不必瞻前顾后。你比自己以为的更强大，相信直觉，全力出击。',
+    fortune:{事业:'大进',感情:'升温',财运:'可投',健康:'充沛'},
+    yi:'创业·推进计划·重要决定',
+    ji:'自我怀疑·拖延·过度谦虚'
+  },
+  {
+    num:'第十二签',icon:'生',title:'草木逢春',level:'ji',levelText:'吉',
+    verse:['野火燒不盡，春風吹又生','天街小雨潤如酥，草色遙看近卻無'],source:'— 白居易 / 韩愈',
+    interp:'生机勃发之兆。曾受挫的事情正在悄然恢复，困境将有转机。此签尤利于重启旧计划或修复关系。顺应自然节律，不必强求时间表，生机自来。',
+    fortune:{事业:'复苏',感情:'化解',财运:'回暖',健康:'渐好'},
+    yi:'重启计划·修复关系·耐心等待',
+    ji:'放弃复出的机会·急于求成'
+  },
+  {
+    num:'第十三签',icon:'战',title:'将星入命',level:'daji',levelText:'大吉',
+    verse:['會當淩絕頂，一覽衆山小','男兒何不帶吴鉤，收取關山五十州'],source:'— 杜甫 / 李贺',
+    interp:'强势大吉，竞争之中占优。此签主胆魄与主动进取，凡需要勇气与决断的事，此刻是最佳时机。竞争、争取、谈判皆处于有利位置，当仁不让。',
+    fortune:{事业:'制胜',感情:'主动',财运:'积极',健康:'精力充沛'},
+    yi:'竞争·谈判·争取机会',
+    ji:'退缩·让步·等待他人主动'
+  },
+  {
+    num:'第十四签',icon:'桃',title:'桃花运临',level:'ji',levelText:'吉',
+    verse:['人面桃花相映紅','去年今日此門中'],source:'— 崔护·题都城南庄',
+    interp:'情缘之兆显现。感情方面有良好进展，单身者将遇佳缘，恋爱中的人关系升温。此签同时主贵人运旺，社交场合将有意外收获，宜多走动，扩展人脉。',
+    fortune:{事业:'贵人助',感情:'大利',财运:'有偏财',健康:'愉悦'},
+    yi:'社交·约会·拓展人脉',
+    ji:'宅家独处·拒绝邀约'
+  },
+  {
+    num:'第十五签',icon:'山',title:'稳如泰山',level:'ping',levelText:'平',
+    verse:['不動如山，難知如陰','其徐如林，侵掠如火'],source:'— 孫子·軍爭篇',
+    interp:'稳健中性之签。当下局势不宜大动，守成为上。你所担忧的事情不会有太大变化，既无大喜，也无大忧。踏实做好当下的每一件事，积累厚度，等待爆发时机。',
+    fortune:{事业:'稳定',感情:'平稳',财运:'保本',健康:'注意劳累'},
+    yi:'坚守·精进技能·积累资源',
+    ji:'贸然跳槽·大额投资'
+  },
+  {
+    num:'第十六签',icon:'迷',title:'迷雾渐散',level:'ping',levelText:'平',
+    verse:['山重水複疑無路，柳暗花明又一村','不識廬山真面目，只緣身在此山中'],source:'— 陆游 / 苏轼',
+    interp:'正处于迷茫困惑期，方向尚不明朗。但此签暗示迷雾即将消散，答案在路上。关键是跳出当局者视角，寻求旁观者意见，换个角度看问题，豁然开朗不远。',
+    fortune:{事业:'待明朗',感情:'需沟通',财运:'谨慎观望',健康:'疏导情绪'},
+    yi:'请教他人·换角度思考',
+    ji:'固执己见·独自钻牛角尖'
+  },
+  {
+    num:'第十七签',icon:'鹏',title:'鸿鹄展翅',level:'daji',levelText:'大吉',
+    verse:['鵬之徙於南冥也，水擊三千里','抟扶搖而上者九萬里'],source:'— 庄子·逍遥游',
+    interp:'志存高远，时机已到。此签乃最上乘的进取之兆，鼓励你大胆追求远大目标，不要将就，不要设上限。凡事放眼长远，此刻的勇敢决定将影响未来数年的走向。',
+    fortune:{事业:'腾飞',感情:'升华',财运:'长线大利',健康:'活力满满'},
+    yi:'设立远大目标·放手一搏',
+    ji:'短视·安于现状·自我设限'
+  },
+  {
+    num:'第十八签',icon:'云',title:'阴云低垂',level:'xiong',levelText:'凶',
+    verse:['夕陽無限好，只是近黃昏','興盡悲來，識盈虛之有數'],source:'— 李商隐 / 王勃',
+    interp:'运势低迷，凡事需多加谨慎。此签警示你不宜做重大决定，事情可能不如预期。重要是保持耐心，控制情绪，不因一时挫折放弃长远目标。低谷期终将过去。',
+    fortune:{事业:'受阻',感情:'多敏感',财运:'防损失',健康:'多休息'},
+    yi:'养精蓄锐·梳理思路',
+    ji:'重大决定·冲动消费·争论'
+  },
+  {
+    num:'第十九签',icon:'移',title:'星移物换',level:'ji',levelText:'吉',
+    verse:['海日生殘夜，江春入舊年','沉舟側畔千帆過，病樹前頭萬木春'],source:'— 王湾 / 刘禹锡',
+    interp:'变化来临，但变化中蕴含机遇。旧的事物行将结束，新的契机正在涌现。此签尤利于转型与转变，勇于接受改变，顺势而动，将获得超出预期的收获。',
+    fortune:{事业:'转机',感情:'新篇',财运:'转型有利',健康:'活力新生'},
+    yi:'接受改变·转型·拥抱新事物',
+    ji:'留恋过去·拒绝改变'
+  },
+  {
+    num:'第二十签',icon:'玄',title:'天机不可泄',level:'ping',levelText:'平',
+    verse:['知之者不言，言之者不知','天機不可泄漏'],source:'— 老子·道德经',
+    interp:'此签玄妙，天机难言。并非不吉，而是当下局势变数过多，难以判断。唯一建议：守住本心，遵从直觉，做你认为正确的事。有些事，不必问天，问自己就好。',
+    fortune:{事业:'变数',感情:'随缘',财运:'顺其自然',健康:'心态为先'},
+    yi:'内省·随心而动',
+    ji:'过度分析·执着于结果'
+  },
+];
+
+// ══════════════════════
+// 状态
+// ══════════════════════
+let shakeCount=0;
+const SHAKE_NEED=5;
+let lastShakeTime=0;
+let wishText='';
+let currentLot=null;
+const STORAGE_KEY='fortune_draw_time_v2';
+
+// ══════════════════════
+// 24小时限制检查
+// ══════════════════════
+function checkBlocked(){
+  const last=localStorage.getItem(STORAGE_KEY);
+  if(!last) return false; // 首次求签，无限制
+  const elapsed=Date.now()-Number(last);
+  if(elapsed>=86400000) return false; // 已过24小时
+  // 未满24小时，显示拦截页
+  showBlockedScreen(86400000-elapsed);
+  return true;
+}
+function saveDrawTime(){
+  localStorage.setItem(STORAGE_KEY,String(Date.now()));
+}
+let blockTimer=null;
+function showBlockedScreen(remainMs){
+  const cd=document.getElementById('countdownVal');
+  function tick(){
+    if(remainMs<=0){
+      cd.textContent='00:00:00';
+      clearInterval(blockTimer); blockTimer=null;
+      return;
+    }
+    const h=Math.floor(remainMs/3600000);
+    const m=Math.floor((remainMs%3600000)/60000);
+    const s=Math.floor((remainMs%60000)/1000);
+    cd.textContent=
+      String(h).padStart(2,'0')+':'+
+      String(m).padStart(2,'0')+':'+
+      String(s).padStart(2,'0');
+    remainMs-=1000;
+  }
+  tick();
+  blockTimer&&clearInterval(blockTimer);
+  blockTimer=setInterval(tick,1000);
+  showScreen('s-blocked');
+}
+
+// ══════════════════════
+// S0 → S1
+// ══════════════════════
+function goShake(){
+  if(checkBlocked()) return;
+  wishText=document.getElementById('wishInput').value.trim();
+  shakeCount=0;
+  updateShakeUI();
+  initSticks();
+  showScreen('s1');
+  requestMotion();
+}
+
+// ══════════════════════
+// 摇晃检测（手机）
+// ══════════════════════
+function requestMotion(){
+  if(typeof DeviceMotionEvent!=='undefined'&&
+     typeof DeviceMotionEvent.requestPermission==='function'){
+    DeviceMotionEvent.requestPermission().then(r=>{
+      if(r==='granted') window.addEventListener('devicemotion',onMotion);
+      else showToast('无法获取陀螺仪权限，请点击签筒');
+    }).catch(()=>showToast('请点击签筒求签'));
+  } else {
+    window.addEventListener('devicemotion',onMotion);
+  }
+}
+
+function onMotion(e){
+  if(document.getElementById('s1').classList.contains('active')===false) return;
+  const a=e.accelerationIncludingGravity;
+  if(!a) return;
+  const mag=Math.sqrt(a.x*a.x+a.y*a.y+a.z*a.z);
+  const now=Date.now();
+  if(mag>18&&now-lastShakeTime>400){
+    lastShakeTime=now;
+    doShake();
+  }
+}
+
+// 空格键
+window.addEventListener('keydown',e=>{
+  if(e.code==='Space'&&document.getElementById('s1').classList.contains('active')){
+    e.preventDefault(); doShake();
+  }
+});
+
+// ══════════════════════
+// 摇动逻辑
+// ══════════════════════
+function doShake(){
+  if(!document.getElementById('s1').classList.contains('active')) return;
+  const tube=document.getElementById('tube');
+  tube.classList.remove('shaking');
+  void tube.offsetWidth;
+  tube.classList.add('shaking');
+  // 签条随机抖动
+  document.querySelectorAll('.stick-item').forEach(s=>{
+    s.style.transform=`rotate(${(Math.random()-.5)*18}deg) translateY(${Math.random()*-8}px)`;
+    setTimeout(()=>s.style.transform=`rotate(${(Math.random()-.5)*6}deg)`,300);
+  });
+  shakeCount++;
+  updateShakeUI();
+  if(shakeCount>=SHAKE_NEED){
+    window.removeEventListener('devicemotion',onMotion);
+    setTimeout(drawLot,500);
+  }
+}
+
+function updateShakeUI(){
+  const pct=Math.min(shakeCount/SHAKE_NEED,1);
+  const circ=document.getElementById('progressCircle');
+  const r=26, c=2*Math.PI*r;
+  circ.style.strokeDashoffset=c*(1-pct);
+  document.getElementById('shakeCount').textContent=shakeCount;
+  document.getElementById('shakeNeed').textContent=Math.max(0,SHAKE_NEED-shakeCount);
+}
+
+// ══════════════════════
+// 抽签 → 掉落动画
+// ══════════════════════
+function drawLot(){
+  currentLot=LOTS[Math.floor(Math.random()*LOTS.length)];
+  showScreen('s2');
+  const wrap=document.getElementById('fallingWrap');
+  // 清旧签
+  wrap.querySelectorAll('.falling-stick').forEach(e=>e.remove());
+  // 主签（金色）
+  const ms=document.createElement('div');
+  ms.className='falling-stick';
+  ms.style.cssText=`
+    width:14px; height:180px;
+    background:linear-gradient(180deg,#f0d080,#c09030,#8a6020);
+    box-shadow:0 0 12px rgba(201,168,76,0.5);
+    z-index:5;
+  `;
+  wrap.appendChild(ms);
+  // 陪衬签
+  for(let i=0;i<3;i++){
+    const ss=document.createElement('div');
+    ss.className='falling-stick';
+    const off=(Math.random()-.5)*60;
+    ss.style.cssText=`
+      width:10px; height:${140+Math.random()*30}px;
+      background:linear-gradient(180deg,${STICK_COLORS[i*3]},#3a2008);
+      opacity:0.5;
+      animation-delay:${i*.15}s;
+      left:calc(50% + ${off}px);
+      transform:translateX(0);
+    `;
+    wrap.appendChild(ss);
+  }
+  setTimeout(showResult,1400);
+}
+
+// ══════════════════════
+// 展示签文
+// ══════════════════════
+function showResult(){
+  const lot=currentLot;
+  const s3=document.getElementById('s3');
+  const wish=wishText?`「${wishText}」所求`:'今日运势';
+
+  const levelClass={
+    daji:'level-daji',ji:'level-ji',ping:'level-ping',
+    xiong:'level-xiong',daxiong:'level-daxiong'
+  }[lot.level];
+
+  s3.innerHTML=`
+    <div class="sign-badge-row">
+      <div class="sign-num">${lot.num} · ${wish}</div>
+      <div class="sign-level ${levelClass}">${lot.levelText}</div>
+    </div>
+    <div class="fortune-paper">
+      <div class="paper-fold" style="top:30%"></div>
+      <div class="paper-fold" style="top:62%"></div>
+      <div class="paper-stamp">${INK_ICONS[lot.icon]||lot.icon}</div>
+      <div class="paper-header">
+        <div class="paper-icon"></div>
+        <div>
+          <div class="paper-title">${lot.title}</div>
+          <div class="paper-sub">數玄 · ${lot.num}</div>
+        </div>
+      </div>
+      <div class="verse-block">
+        ${lot.verse.map(v=>`<div class="verse-line">${v}</div>`).join('')}
+        <div class="verse-source">${lot.source}</div>
+      </div>
+      <div class="interp-section">
+        <div class="interp-label">解签</div>
+        <div class="interp-text">${lot.interp}</div>
+      </div>
+      <div class="interp-label" style="margin-bottom:8px;">运势细项</div>
+      <div class="fortune-grid">
+        ${Object.entries(lot.fortune).map(([k,v])=>`
+          <div class="fortune-item">
+            <div class="fitem-label">${k}</div>
+            <div class="fitem-val">${v}</div>
+          </div>
+        `).join('')}
+      </div>
+      <div class="yiji-row">
+        <div class="yiji-block yi-block">
+          <div class="yiji-title">宜</div>
+          <div class="yiji-text">${lot.yi}</div>
+        </div>
+        <div class="yiji-block ji-block">
+          <div class="yiji-title">忌</div>
+          <div class="yiji-text">${lot.ji}</div>
+        </div>
+      </div>
+      <div class="paper-footer">数玄 · 問天機 · 數玄</div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-again" onclick="resetAll()">重新求签</button>
+    </div>
+    <div style="height:20px;"></div>
+  `;
+  showScreen('s3');
+  saveDrawTime(); // 记录本次求签时间，24小时内不可再求
+}
+
+function resetAll(){
+  document.getElementById('wishInput').value='';
+  wishText='';
+  showScreen('s0');
+}
+
+function goShakeAgain(){
+  if(checkBlocked()) return;
+  shakeCount=0;
+  updateShakeUI();
+  initSticks();
+  showScreen('s1');
+  requestMotion();
+}
+
+// ══════════════════════
+// 弹窗工具
+// ══════════════════════
+function closeModal(id){
+  document.getElementById(id).classList.add('hidden');
+}
+function openModal(id){
+  document.getElementById(id).classList.remove('hidden');
+}
+
+// ══════════════════════
+// 供香祈福
+// ══════════════════════
+let incenseLit=false;
+function openIncense(){
+  if(!currentLot){ showToast('请先求签'); return; }
+  openModal('modalIncense');
+}
+function lightIncense(){
+  const stick=document.getElementById('incenseStickEl');
+  const smoke=document.getElementById('incenseSmoke');
+  if(incenseLit) return;
+  incenseLit=true;
+  stick.style.background='linear-gradient(180deg, #f0d080, #c09030, #8a6020)';
+  stick.style.boxShadow='0 0 12px rgba(201,168,76,0.6)';
+  smoke.style.display='flex';
+  showToast('清香已燃，心诚则灵');
+}
+function offerIncense(){
+  const pre=document.getElementById('incensePre');
+  const res=document.getElementById('incenseResult');
+  const txt=document.getElementById('incenseResultText');
+  const sub=document.getElementById('incenseResultSub');
+  const wish=document.getElementById('incenseWish').value.trim();
+  if(!incenseLit){ showToast('请先点燃清香'); return; }
+  pre.style.display='none';
+  res.classList.add('show');
+  const blessings=[
+    '愿此清香，上达天听',
+    '心香一炷，福泽绵长',
+    '虔诚所至，神明鉴之',
+    '清香袅袅，所求皆遂'
+  ];
+  txt.textContent=blessings[Math.floor(Math.random()*blessings.length)];
+  sub.textContent=wish?`愿：${wish}`:'诸事顺遂，平安喜乐';
+}
+
+// ══════════════════════
+// 签文注解
+// ══════════════════════
+function openAnnotation(){
+  if(!currentLot){ showToast('请先求签'); return; }
+  const lot=currentLot;
+  const body=document.getElementById('annotBody');
+  body.innerHTML=`
+    <div class="annot-section">
+      <div class="annot-tag">签题</div>
+      <div style="font-size:18px;color:var(--gold-l);letter-spacing:3px;margin-bottom:6px;">${lot.title}</div>
+      <div style="font-size:12px;color:var(--ink-d);letter-spacing:2px;">${lot.num} · ${lot.levelText}</div>
+    </div>
+    <div class="annot-divider"></div>
+    <div class="annot-section">
+      <div class="annot-tag">签文</div>
+      <div class="annot-verse-full">
+        ${lot.verse.map(v=>v+'<br>').join('')}
+        <div style="font-size:12px;color:var(--ink-d);letter-spacing:2px;margin-top:6px;">${lot.source}</div>
+      </div>
+    </div>
+    <div class="annot-divider"></div>
+    <div class="annot-section">
+      <div class="annot-tag">详解</div>
+      <div class="annot-text">${lot.interp}</div>
+    </div>
+    <div class="annot-divider"></div>
+    <div class="annot-section">
+      <div class="annot-tag">运势</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        ${Object.entries(lot.fortune).map(([k,v])=>`
+          <span style="padding:4px 10px;border:1px solid rgba(201,168,76,0.2);font-size:12px;color:var(--ink);letter-spacing:1px;">
+            ${k}: ${v}
+          </span>
+        `).join('')}
+      </div>
+    </div>
+    <div class="annot-divider"></div>
+    <div class="annot-section">
+      <div style="display:flex;gap:10px;">
+        <div style="flex:1;padding:8px 12px;background:rgba(80,160,80,0.06);border:1px solid rgba(80,160,80,0.15);">
+          <div style="font-size:11px;color:#609060;letter-spacing:2px;margin-bottom:4px;">宜</div>
+          <div style="font-size:12px;color:var(--ink);">${lot.yi}</div>
+        </div>
+        <div style="flex:1;padding:8px 12px;background:rgba(160,80,80,0.06);border:1px solid rgba(160,80,80,0.15);">
+          <div style="font-size:11px;color:#a06060;letter-spacing:2px;margin-bottom:4px;">忌</div>
+          <div style="font-size:12px;color:var(--ink);">${lot.ji}</div>
+        </div>
+      </div>
+    </div>
+  `;
+  openModal('modalAnnot');
+}
+
+// ══════════════════════
+// 分享签文
+// ══════════════════════
+function openShare(){
+  if(!currentLot){ showToast('请先求签'); return; }
+  openModal('modalShare');
+  setTimeout(renderShareCanvas,200);
+}
+function renderShareCanvas(){
+  const lot=currentLot;
+  const cv=document.getElementById('shareCanvas');
+  const ctx=cv.getContext('2d');
+
+  // ── 固定高分辨率尺寸（2x 确保 retina 清晰 + 导出高清） ──
+  const W=1080, H=1520;
+  cv.width=W; cv.height=H;
+
+  // ── 背景 ──
+  const bg=ctx.createRadialGradient(W/2,H/2,40,W/2,H/2,Math.max(W,H)*.6);
+  bg.addColorStop(0,'#101624');
+  bg.addColorStop(0.5,'#0a0e1a');
+  bg.addColorStop(1,'#04060c');
+  ctx.fillStyle=bg;
+  ctx.fillRect(0,0,W,H);
+
+  // ── 背景纹理（隐约云纹） ──
+  for(let i=0;i<12;i++){
+    ctx.beginPath();
+    ctx.arc(
+      60+Math.random()*(W-120),
+      60+Math.random()*(H-120),
+      20+Math.random()*60,
+      0,Math.PI*2
+    );
+    ctx.fillStyle=`rgba(201,168,76,${.01+Math.random()*.03})`;
+    ctx.fill();
+  }
+
+  // ── 双线边框 ──
+  ctx.strokeStyle='rgba(201,168,76,0.18)';
+  ctx.lineWidth=1.5;
+  ctx.strokeRect(32,32,W-64,H-64);
+  ctx.strokeStyle='rgba(201,168,76,0.06)';
+  ctx.strokeRect(40,40,W-80,H-80);
+
+  // ── 四角装饰（L型金角） ──
+  ctx.strokeStyle='rgba(201,168,76,0.2)';
+  ctx.lineWidth=2;
+  [[48,48],[W-48,48],[48,H-48],[W-48,H-48]].forEach(([x,y])=>{
+    ctx.beginPath();
+    ctx.moveTo(x-20,y); ctx.lineTo(x+20,y);
+    ctx.moveTo(x,y-20); ctx.lineTo(x,y+20);
+    ctx.stroke();
+  });
+
+  // ── 顶部标题 ──
+  ctx.textAlign='center';
+  ctx.textBaseline='middle';
+
+  ctx.fillStyle='rgba(201,168,76,0.12)';
+  ctx.font='20px "Noto Serif SC", serif';
+  ctx.fillText('━━━  ／  ／  ━━━',W/2,78);
+
+  ctx.fillStyle='#c9a84c';
+  ctx.font='28px "Noto Serif SC", serif';
+  ctx.fillText('數玄 · 問天機',W/2,122);
+
+  ctx.strokeStyle='rgba(201,168,76,0.12)';
+  ctx.lineWidth=1;
+  ctx.beginPath();
+  ctx.moveTo(W/2-170,152); ctx.lineTo(W/2+170,152);
+  ctx.stroke();
+
+  // ── 签号 ──
+  ctx.fillStyle='#8a7a60';
+  ctx.font='24px "Noto Serif SC", serif';
+  ctx.fillText(lot.num,W/2,200);
+
+  // ── 等级（彩色标签） ──
+  const levelColors={daji:'#f0c040',ji:'#70d080',ping:'#90b0d0',xiong:'#d08050',daxiong:'#d04040'};
+  const lvColor=levelColors[lot.level]||'#9a8a70';
+  ctx.fillStyle=lvColor;
+  ctx.font='22px "Noto Serif SC", serif';
+  ctx.fillText(`【${lot.levelText}】`,W/2,242);
+
+  // ── 签题（大号） ──
+  ctx.fillStyle='#f0d080';
+  ctx.font='54px "Noto Serif SC", serif';
+  ctx.fillText(lot.title,W/2,320);
+
+  // ── 分隔线 ──
+  ctx.strokeStyle='rgba(201,168,76,0.08)';
+  ctx.lineWidth=1;
+  ctx.beginPath();
+  ctx.moveTo(W/2-200,364); ctx.lineTo(W/2+200,364);
+  ctx.stroke();
+
+  // ── 符号（水墨签符） ──
+  // 尝试用 SVG 图标渲染到画布
+  const iconSvg=INK_ICONS[lot.icon];
+  if(iconSvg){
+    const svgBlob=new Blob([iconSvg],{type:'image/svg+xml;charset=utf-8'});
+    const url=URL.createObjectURL(svgBlob);
+    const img=new Image();
+    img.onload=()=>{
+      ctx.save();
+      ctx.globalAlpha=0.12;
+      ctx.drawImage(img,W/2-80,390,160,160);
+      ctx.restore();
+      URL.revokeObjectURL(url);
+    };
+    img.onerror=()=>{
+      ctx.fillStyle='rgba(201,168,76,0.10)';
+      ctx.font='88px "Noto Serif SC", serif';
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(lot.icon,W/2,440);
+    };
+    img.src=url;
+  } else {
+    ctx.fillStyle='rgba(201,168,76,0.10)';
+    ctx.font='88px "Noto Serif SC", serif';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(lot.icon,W/2,440);
+  }
+
+  // ── 诗文 ──
+  const verseStartY=520;
+  ctx.fillStyle='#c0b090';
+  ctx.font='28px "Noto Serif SC", serif';
+  const vs=lot.verse.slice(0,2);
+  vs.forEach((v,i)=>{
+    ctx.fillText(v,W/2,verseStartY+i*56);
+  });
+
+  // ── 来源 ──
+  const sourceY=verseStartY+vs.length*56+30;
+  ctx.fillStyle='#6a5a48';
+  ctx.font='20px "Noto Serif SC", serif';
+  ctx.fillText(lot.source,W/2,sourceY);
+
+  // ── 解签（自动换行，紧跟来源之后） ──
+  const wrapText=(txt,x,y,maxW,lineH,style)=>{
+    ctx.fillStyle=style||'#a09078';
+    ctx.font='22px "Noto Serif SC", serif';
+    const chars=[...txt];
+    let line='',ly=y,i=0;
+    for(const c of chars){
+      const test=line+c;
+      if(ctx.measureText(test).width>maxW&&line){
+        if(i===0) ctx.fillStyle='rgba(201,168,76,0.08)';
+        ctx.fillText(line,x,ly);
+        line=c; ly+=lineH; i++;
+      } else { line=test; }
+    }
+    if(line) ctx.fillText(line,x,ly);
+    return ly;
+  };
+  const annotationY=sourceY+70;
+  ctx.textAlign='left';
+  ctx.textBaseline='alphabetic';
+  const bottomY=wrapText(lot.interp,120,annotationY,W-240,38,'#c0b090');
+
+  // ── 底部 ──
+  ctx.textAlign='center';
+  ctx.textBaseline='middle';
+  const by=Math.max(bottomY+48,1320);
+  ctx.strokeStyle='rgba(201,168,76,0.08)';
+  ctx.lineWidth=1;
+  ctx.beginPath();
+  ctx.moveTo(W/2-160,by); ctx.lineTo(W/2+160,by);
+  ctx.stroke();
+
+  ctx.fillStyle='rgba(201,168,76,0.25)';
+  ctx.font='22px "Noto Serif SC", serif';
+  ctx.fillText('数玄 · 问天机',W/2,by+40);
+
+  ctx.fillStyle='rgba(201,168,76,0.10)';
+  ctx.font='16px "Noto Serif SC", serif';
+  ctx.fillText('天机不可轻泄·随缘惜缘',W/2,by+68);
+
+  // ── 水印 ──
+  ctx.save();
+  ctx.translate(W-80,H-50);
+  ctx.rotate(-Math.PI/12);
+  ctx.fillStyle='rgba(201,168,76,0.04)';
+  ctx.font='18px "Noto Serif SC", serif';
+  ctx.textAlign='right';
+  ctx.fillText('天機閣',0,0);
+  ctx.restore();
+}
+function downloadShare(){
+  const cv=document.getElementById('shareCanvas');
+  const link=document.createElement('a');
+  link.download=`数玄签_${Date.now()}.png`;
+  link.href=cv.toDataURL('image/png');
+  link.click();
+  showToast('签文图片已保存');
+}
+function copyShareText(){
+  if(!currentLot){ showToast('请先求签'); return; }
+  const lot=currentLot;
+  const txt=`【${lot.num} · ${lot.levelText}】${lot.title}\n`+
+    lot.verse.map(v=>`「${v}」`).join('\n')+'\n'+
+    `${lot.source}\n\n`+
+    `${lot.interp}\n\n`+
+    `—— 数玄 · 问天机`;
+  navigator.clipboard.writeText(txt).then(()=>{
+    showToast('签文已复制');
+  }).catch(()=>{
+    showToast('复制失败，请手动复制');
+  });
+}
+</script>
+</body>
+</html>
