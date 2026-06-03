@@ -1952,6 +1952,7 @@ let lastShakeTime=0;
 let wishText='';
 let currentLot=null;
 const STORAGE_KEY='fortune_draw_time_v2';
+	const LOT_STORAGE_KEY='fortune_last_lot_v2';
 
 // ══════════════════════
 // 24小时限制检查
@@ -1967,9 +1968,19 @@ function checkBlocked(){
 }
 function saveDrawTime(){
   localStorage.setItem(STORAGE_KEY,String(Date.now()));
+  if(currentLot){
+    try{ localStorage.setItem(LOT_STORAGE_KEY,JSON.stringify(currentLot)); }catch(e){}
+  }
 }
 let blockTimer=null;
 function showBlockedScreen(remainMs){
+  // 恢复上次签文，以便注解/分享可用
+  if(!currentLot){
+    try{
+      const saved=localStorage.getItem(LOT_STORAGE_KEY);
+      if(saved) currentLot=JSON.parse(saved);
+    }catch(e){}
+  }
   const cd=document.getElementById('countdownVal');
   function tick(){
     if(remainMs<=0){
