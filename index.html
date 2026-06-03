@@ -32,16 +32,23 @@
 }
 
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+button, .btn-seek, .btn-again, .blocked-btn, .share-btn, .incense-btn {
+  touch-action: manipulation;
+  min-height: 44px;
+}
 
 body {
   background: var(--bg);
   color: var(--ink);
   font-family: 'Noto Serif SC', 'STKaiti', serif;
   min-height: 100vh;
+  min-height: 100dvh;
   overflow: hidden;
   position: relative;
   cursor: default;
   user-select: none;
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* ══════════════════════
@@ -341,7 +348,8 @@ body {
 ══════════════════════ */
 #app {
   position: relative; z-index: 10;
-  width: 100vw; height: 100vh;
+  width: 100%; height: 100vh;
+  height: 100dvh;
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
 }
@@ -359,7 +367,7 @@ body {
 ══════════════════════ */
 .header {
   position: fixed; top: 0; left: 0; right: 0;
-  padding: 16px 24px 16px;
+  padding: calc(env(safe-area-inset-top, 0px) + 16px) 24px 16px;
   background: linear-gradient(180deg, var(--bg) 30%, rgba(5,7,14,0.92) 65%, transparent);
   display: flex; justify-content: center; align-items: flex-end;
   gap: 12px; z-index: 20;
@@ -383,7 +391,7 @@ body {
 
 /* 顶部装饰线 */
 .header-deco {
-  position: fixed; top: 54px; left: 50%; transform: translateX(-50%);
+  position: fixed; top: calc(env(safe-area-inset-top, 0px) + 54px); left: 50%; transform: translateX(-50%);
   display: flex; align-items: center; gap: 8px; z-index: 20;
 }
 .deco-line { width: 60px; height: 1px; background: linear-gradient(90deg, transparent, var(--gold-d)); }
@@ -397,7 +405,7 @@ body {
 /* ══════════════════════
    S0: 进场
 ══════════════════════ */
-#s0 { gap: 0; padding-top: 80px; }
+#s0 { gap: 0; padding-top: calc(env(safe-area-inset-top, 0px) + 80px); }
 
 .temple-icon {
   width: 72px; height: 72px;
@@ -459,14 +467,15 @@ body {
   width: 100%;
   background: rgba(201,168,76,0.04);
   border: 1px solid rgba(201,168,76,0.25);
-  padding: 12px 16px;
+  padding: 14px 16px;
   font-family: inherit;
-  font-size: 15px;
+  font-size: 16px;
   color: var(--ink);
   outline: none;
   letter-spacing: 1px;
   text-align: center;
   transition: border-color .3s, background .3s;
+  min-height: 44px;
 }
 .wish-input:focus {
   border-color: rgba(201,168,76,0.6);
@@ -501,7 +510,7 @@ body {
 /* ══════════════════════
    S1: 摇签
 ══════════════════════ */
-#s1 { gap: 0; padding-top: 80px; }
+#s1 { gap: 0; padding-top: calc(env(safe-area-inset-top, 0px) + 80px); }
 
 .shake-hint {
   font-size: 13px;
@@ -654,7 +663,7 @@ body {
 /* ══════════════════════
    S2: 掉签动画
 ══════════════════════ */
-#s2 { padding-top: 80px; }
+#s2 { padding-top: calc(env(safe-area-inset-top, 0px) + 80px); }
 
 .falling-stick-wrap {
   position: relative;
@@ -695,13 +704,15 @@ body {
    S3: 签文
 ══════════════════════ */
 #s3 {
-  padding: 80px 16px 20px;
+  padding: calc(env(safe-area-inset-top, 0px) + 80px) 16px 20px;
   gap: 0;
   overflow-y: auto;
-  max-height: 100vh;
+  max-height: 100dvh;
   align-items: center;
   justify-content: flex-start;
-  padding-bottom: 32px;
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 32px);
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
 }
 
 /* 签号 + 等级徽章 */
@@ -991,7 +1002,7 @@ body {
   position: fixed; inset: 0; z-index: 200;
   background: rgba(4,6,12,0.88);
   display: flex; align-items: center; justify-content: center;
-  padding: 20px;
+  padding: max(20px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));
   animation: maskIn .3s ease;
 }
 @keyframes maskIn { from{opacity:0} to{opacity:1} }
@@ -1000,7 +1011,10 @@ body {
 .modal-box {
   width: min(420px, 94vw);
   max-height: 85vh;
+  max-height: 85dvh;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
   background: #0c1018;
   border: 1px solid var(--gold-d);
   box-shadow: 0 0 40px rgba(201,168,76,0.12);
@@ -1032,7 +1046,13 @@ body {
 /* ══════════════════════
    24小时拦截页 S-BLOCKED
 ══════════════════════ */
-#s-blocked { gap: 24px; padding: 80px 24px 40px; }
+#s-blocked {
+  gap: 24px; padding: calc(env(safe-area-inset-top, 0px) + 80px) 24px calc(env(safe-area-inset-bottom, 0px) + 40px);
+  overflow-y: auto;
+  max-height: 100dvh;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
 
 .blocked-icon {
   width: 80px; height: 80px;
@@ -1250,11 +1270,12 @@ body {
   width: 100%;
   background: rgba(201,168,76,0.05);
   border: 1px solid rgba(201,168,76,0.2);
-  padding: 10px 14px;
-  font-family: inherit; font-size: 14px;
+  padding: 12px 14px;
+  font-family: inherit; font-size: 16px;
   color: var(--ink); letter-spacing: 1px; text-align: center;
   outline: none; margin-top: 8px;
   transition: border-color .2s;
+  min-height: 44px;
 }
 .incense-wish-input:focus { border-color: rgba(201,168,76,0.5); }
 .incense-wish-input::placeholder { color: var(--ink-d); font-size: 12px; }
