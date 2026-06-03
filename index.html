@@ -32,7 +32,7 @@
 }
 
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-button, .btn-seek, .btn-again, .blocked-btn, .share-btn, .incense-btn {
+.btn-seek, .btn-again, .blocked-btn, .share-btn, .incense-btn {
   touch-action: manipulation;
   min-height: 44px;
 }
@@ -1013,7 +1013,6 @@ body {
   max-height: 85vh;
   max-height: 85dvh;
   overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
   background: #0c1018;
   border: 1px solid var(--gold-d);
@@ -1033,12 +1032,15 @@ body {
 }
 .modal-title { font-size: 14px; color: var(--gold); letter-spacing: 3px; }
 .modal-close {
-  width: 28px; height: 28px;
+  width: 44px; height: 44px;
   border: 1px solid rgba(201,168,76,0.3);
+  border-radius: 50%;
   color: var(--ink-d); cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  font-size: 14px; background: transparent;
+  font-size: 16px; background: transparent;
   transition: all .2s;
+  touch-action: manipulation;
+  flex-shrink: 0;
 }
 .modal-close:hover { border-color: var(--gold); color: var(--gold); }
 .modal-body { padding: 20px; }
@@ -2203,6 +2205,15 @@ function goShakeAgain(){
 // ══════════════════════
 // 弹窗工具
 // ══════════════════════
+function getOrRestoreLot(){
+  if(currentLot) return currentLot;
+  try{
+    const saved=localStorage.getItem(LOT_STORAGE_KEY);
+    if(saved){ currentLot=JSON.parse(saved); return currentLot; }
+  }catch(e){}
+  return null;
+}
+
 function closeModal(id){
   document.getElementById(id).classList.add('hidden');
 }
@@ -2215,7 +2226,7 @@ function openModal(id){
 // ══════════════════════
 let incenseLit=false;
 function openIncense(){
-  if(!currentLot){ showToast('请先求签'); return; }
+  if(!getOrRestoreLot()){ showToast('请先求签'); return; }
   openModal('modalIncense');
 }
 function lightIncense(){
@@ -2251,7 +2262,7 @@ function offerIncense(){
 // 签文注解
 // ══════════════════════
 function openAnnotation(){
-  if(!currentLot){ showToast('请先求签'); return; }
+  if(!getOrRestoreLot()){ showToast('请先求签'); return; }
   const lot=currentLot;
   const body=document.getElementById('annotBody');
   body.innerHTML=`
@@ -2305,7 +2316,7 @@ function openAnnotation(){
 // 分享签文
 // ══════════════════════
 function openShare(){
-  if(!currentLot){ showToast('请先求签'); return; }
+  if(!getOrRestoreLot()){ showToast('请先求签'); return; }
   openModal('modalShare');
   setTimeout(renderShareCanvas,200);
 }
@@ -2500,7 +2511,7 @@ function downloadShare(){
   showToast('签文图片已保存');
 }
 function copyShareText(){
-  if(!currentLot){ showToast('请先求签'); return; }
+  if(!getOrRestoreLot()){ showToast('请先求签'); return; }
   const lot=currentLot;
   const txt=`【${lot.num} · ${lot.levelText}】${lot.title}\n`+
     lot.verse.map(v=>`「${v}」`).join('\n')+'\n'+
